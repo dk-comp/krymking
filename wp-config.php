@@ -8,7 +8,7 @@ define( 'DB_NAME', 'rsya_lightsshop' );
 define( 'DB_USER', 'root' );
 
 /** Пароль к базе данных MySQL */
-define( 'DB_PASSWORD', 'root' );
+define( 'DB_PASSWORD', '' );
 
 /** Имя сервера MySQL */
 define( 'DB_HOST', 'localhost' );

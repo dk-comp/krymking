@@ -11,6 +11,16 @@ if ( ! defined( '_S_VERSION' ) ) {
 	// Replace the version number of the theme on each release.
 	define( '_S_VERSION', '1.0.0' );
 }
+	
+	$_CATEGORIES = [
+			83 => 'Квартиры',
+			90 => 'Дома',
+			89 => 'Частный сектор',
+			91 => 'Комнаты',
+			85 => 'Отели',
+			86=> 'Мини-отели',
+			87 => 'Пансионаты',
+	];
 
 if ( ! function_exists( 'krymking_setup' ) ) :
 	/**

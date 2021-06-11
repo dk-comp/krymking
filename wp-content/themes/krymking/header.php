@@ -129,12 +129,13 @@ global $current_user;
 <?php global $_CATEGORIES?>
 <?php if(!empty($_CATEGORIES)):?>
 	<?php
-	$taxonomies = get_terms( array(
+	global $_TAXONOMIES;
+	$_TAXONOMIES = get_terms( array(
        'taxonomy' => 'hotel',
        'hide_empty' => false,
        )
 	);
-	foreach($taxonomies as $key => $term){
+	foreach($_TAXONOMIES as $key => $term){
 		$args = array(
 				'post_type' => 'hotels',
 				'hotel'=> $term->slug,
@@ -145,26 +146,32 @@ global $current_user;
 		
 		$Aposts = $query->query($args);
 		
-		$taxonomies[$key]->objectsCount = count($Aposts);
+		$_TAXONOMIES[$key]->objectsCount = count($Aposts);
 		
 	}
+	global $_POPULAR;
 	?>
 	
-	<?php if(!empty($taxonomies)):?>
+	<?php if(!empty($_TAXONOMIES)):?>
 		<?php foreach($_CATEGORIES as $catId => $catName):?>
 			<div class="popup popup-objects popup-<?=$catId?>">
 				<div class="popup-content">
 					<div class="popup-row">
-						<?php foreach($taxonomies as $category){
-							if($category->parent == 0){?>
+						<?php foreach($_TAXONOMIES as $category){
+							if($category->objectsCount !== 0){
+								$_POPULAR[] =$category->term_id;
+								$_POPULAR = array_unique($_POPULAR);
+							}
+							if($category->parent == 0){
+								 ?>
 								<div class="popup-item">
-									<h3><?=$category->name;?></h3>
+									<h3><?=$category->name?></h3>
 									<ul class="city-list">
 										<?php if($category->term_id !== 9) {?>
-											<li><a href="<?=get_category_link($category->term_id);?>?type=<?=$catId?>"><?=$category->name;?>(<?=$category->objectsCount?>)</a></li>
+											<li><a href="<?=get_category_link($category->term_id)?>?type=<?=$catId?>"><?=$category->name?>(<?=$category->objectsCount?>)</a></li>
 											<?php
 										}?>
-										<?php foreach($taxonomies as $subcategory){?><?php if($subcategory->parent == $category->term_id){?>
+										<?php foreach($_TAXONOMIES as $subcategory){?><?php if($subcategory->parent == $category->term_id){?>
 											<li><a href="<?=get_category_link($subcategory->term_id);?>?type=<?=$catId?>"><?=$subcategory->name;?>(<?=$subcategory->objectsCount?>)</a></li>
 										<?php } ?><?php } ?>
 									</ul>

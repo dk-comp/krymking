@@ -124,9 +124,9 @@ $service[] = get_field_object('field_60092180474db', $post_id); // Парков�
 			</ul>
 			<?}?> -->
 
-			<? if (get_field('fast_booking') == 'Включить') { ?>
+<!--			<?/* if (get_field('fast_booking') == 'Включить') { */?>
 				<div class="fast-booking">Мгновенное бронирование</div>
-			<? } ?>
+			--><?/* } */?>
 
 			<? $posts = get_post( $post_id ); ?>
 			<? if( $posts->post_content ) { ?>

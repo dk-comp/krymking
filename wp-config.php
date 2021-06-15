@@ -5,10 +5,10 @@
 define( 'DB_NAME', 'rsya_lightsshop' );
 
 /** Имя пользователя MySQL */
-define( 'DB_USER', 'root' );
+define( 'DB_USER', 'rsya_lightsshop' );
 
 /** Пароль к базе данных MySQL */
-define( 'DB_PASSWORD', 'root' );
+define( 'DB_PASSWORD', 'UEPRaAC53C' );
 
 /** Имя сервера MySQL */
 define( 'DB_HOST', 'localhost' );
@@ -62,7 +62,7 @@ $table_prefix = 'wp_';
  */
 define( 'WP_DEBUG', false );
 
-define( 'SMTP_USER', 'info@krymking.ru' );  
+define( 'SMTP_USER', 'info@krymking.ru' );
 define( 'SMTP_PASS', 'mtgljmmagbulkiqh' );
 define( 'SMTP_HOST', 'smtp.yandex.ru' );
 define( 'SMTP_FROM', 'info@krymking.ru' );
@@ -76,7 +76,7 @@ define( 'SMTP_DEBUG', 0 );
 
 /** Абсолютный путь к директории WordPress. */
 if ( ! defined( 'ABSPATH' ) ) {
-	define( 'ABSPATH', dirname( __FILE__ ) . '/' );
+    define( 'ABSPATH', dirname( __FILE__ ) . '/' );
 }
 
 /** Инициализирует переменные WordPress и подключает файлы. */

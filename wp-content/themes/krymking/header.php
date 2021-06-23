@@ -127,14 +127,19 @@ global $current_user;
 
 <?php } ?>
 <?php global $_CATEGORIES?>
+
 <?php if(!empty($_CATEGORIES)):?>
 	<?php
 	global $_TAXONOMIES;
+	
 	$_TAXONOMIES = get_terms( array(
        'taxonomy' => 'hotel',
        'hide_empty' => false,
        )
 	);
+	$_TAXONOMIES_POPULAR = [];
+	global $_TAXONOMIES_POPULAR;
+	
 	foreach($_TAXONOMIES as $key => $term){
 		$args = array(
 				'post_type' => 'hotels',
@@ -148,8 +153,10 @@ global $current_user;
 		
 		$_TAXONOMIES[$key]->objectsCount = count($Aposts);
 		
+		$_TAXONOMIES_POPULAR[$term->term_id] = $_TAXONOMIES[$key];
+		
 	}
-	global $_POPULAR;
+	
 	?>
 	
 	<?php if(!empty($_TAXONOMIES)):?>
@@ -158,10 +165,7 @@ global $current_user;
 				<div class="popup-content">
 					<div class="popup-row">
 						<?php foreach($_TAXONOMIES as $category){
-							if($category->objectsCount !== 0){
-								$_POPULAR[] =$category->term_id;
-								$_POPULAR = array_unique($_POPULAR);
-							}
+							
 							if($category->parent == 0){
 								 ?>
 								<div class="popup-item">

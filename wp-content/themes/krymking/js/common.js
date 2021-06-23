@@ -372,10 +372,11 @@ jQuery(document).ready(function ($) {
 					   var start = new Date(extensionRange.startDate);
 						end = new Date(extensionRange.endDate);
 						days = (end - start) / 1000 / 60 / 60 / 24;
-		
+					console.log(start)
+					console.log(end)
 					$('[name=days]').val(days);
 					$('.clear-dates').fadeIn();
-		
+
 					data_param();
 		
 		
@@ -408,7 +409,7 @@ jQuery(document).ready(function ($) {
 								'post_id' : $('input[name="post_id"]').val(),
 								'room_id' : $('input[name="room_id"]').val(),
 							},
-							beforeSend: function( xhr){
+							beforeSend: function(xhr){
 								$('.variants-rooms.ajax').html('');
 								$('.variants-rooms.ajax').append('<div class="spinner"></div>');
 							},
@@ -444,11 +445,13 @@ jQuery(document).ready(function ($) {
 	slider();
 
  	function data_param() {
+ 		console.log('asdasdasdasd')
 		$.ajax({
 			url : '/wp-admin/admin-ajax.php',
 			type: "POST",
 			dataType: "html",
 			data: {
+				'post_id': document.querySelector('[name="post_id"]').value,
 				'action' : 'data_param',
 				'counts_guests' : $('input[name="counts_guests"]').val(),
 				'check_in' : $('input[name="check_in"]').val(),
@@ -458,18 +461,31 @@ jQuery(document).ready(function ($) {
 				'babies' : $('input[name="babies"]').val(),
 			},
 			success:function(result){
+				var elem = document.getElementById('single')
+				if (result){
+					alert(result)
+					 elem.disabled = true
+					elem.classList.add(disabled)
+				}else{
+					elem.disabled = false
+					elem.classList.remove(disabled)
+				}
+			},
+			error:function (result){
 				console.log(result);
 			}
+
 		});
  	}
 
 	$('input[name="check_in"], input[name="check_out"], input[name="counts_guests"]').on("change", function(){
 		data_param();
 	});
+
 	$(document).on('click', '.quantity .btn-controls', function() {
 		data_param();
 	});
-
+	//console.log(disabledDays)
 	var date = new Date();
 		date.setDate(date.getDate());
 	$('.datepicker').datepicker({
@@ -485,21 +501,20 @@ jQuery(document).ready(function ($) {
 		numberOfMonths: 2,
 		minDate: date,
 		onSelect: function(dateText, inst, extensionRange) {
-
+			console.log('pckjwn')
 			$('[name=check_in]').val(extensionRange.startDateText);
 			$('[name=check_out]').val(extensionRange.endDateText);
 
        		var start = new Date(extensionRange.startDate);
         		end = new Date(extensionRange.endDate);
         		days = (end - start) / 1000 / 60 / 60 / 24;
-
 			$('[name=days]').val(days);
 			$('.clear-dates').fadeIn();
 
-			data_param();
+			setTimeout(data_param(), 5000);
 
 
-			if (extensionRange.startDateText != extensionRange.endDateText) {
+			/*if (extensionRange.startDateText != extensionRange.endDateText) {
 				$('.overlay').fadeOut();
 				$('.ui-datepicker-multi-2').hide();
 
@@ -540,12 +555,30 @@ jQuery(document).ready(function ($) {
 						}, 800);
 					}
 				});
-
-				$('html, body').animate({scrollTop: ($('#available-rooms').offset().top)-100}, 800);
-			}
+				if ($('#available-rooms').length)
+					$('html, body').animate({scrollTop: ($('#available-rooms').offset().top)-100}, 800);
+			}*/
 		},
 		beforeShow : function(){
 			$('.overlay').fadeIn();
+		},
+		beforeShowDay : function(date){
+			//console.log(disabledDays)
+			let     m = date.getMonth(),
+					d = date.getDate(),
+					y = date.getFullYear();
+
+			if(disabledDays) {
+				for (let i = 0; i < disabledDays.length; i++) {
+					if($.inArray(y + '-' + (m+1) + '-' + d,disabledDays) != -1) {
+						return [true, 'selected-day', 'День заблокирован'];
+					} else {
+						return [true, '', ''];
+					}
+				}
+			} else {
+				return [true, '', ''];
+			}
 		}
 	});
 

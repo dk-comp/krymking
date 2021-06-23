@@ -110,7 +110,7 @@ if (empty($_POST['choosed'])) {
 			</div>
 			<div class="input-group group-vertical">
 				<div class="input-title">Цена за сутки</div>
-				<input type="number" name="price_day" placeholder="<?=the_field('price', $postid);?>" value="<?=the_field('price', $postid);?>" class="form-control">
+				<input type="number" name="price_day" placeholder="<?=the_field('price', $postid);?>" value="<?=the_field('price', $postid);?>" class="form-control" required>
 			</div>
 			<div class="btn btn-save">Сохранить</div>
 		</div>

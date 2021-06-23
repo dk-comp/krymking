@@ -135,7 +135,7 @@ select {
   font-weight: 600;
   font-size: 15px;
 }
-.input-group .disabled{
+.disabled{
   background: dimgray !important;
 }
 .input-group .btn-submit:hover {

@@ -372,15 +372,12 @@ jQuery(document).ready(function ($) {
 					   var start = new Date(extensionRange.startDate);
 						end = new Date(extensionRange.endDate);
 						days = (end - start) / 1000 / 60 / 60 / 24;
-					console.log(start)
-					console.log(end)
 					$('[name=days]').val(days);
 					$('.clear-dates').fadeIn();
 
-					data_param();
-		
 		
 					if (extensionRange.startDateText != extensionRange.endDateText) {
+						data_param();
 						$('.overlay').fadeOut();
 						$('.ui-datepicker-multi-2').hide();
 		
@@ -445,7 +442,7 @@ jQuery(document).ready(function ($) {
 	slider();
 
  	function data_param() {
- 		console.log('asdasdasdasd')
+
 		$.ajax({
 			url : '/wp-admin/admin-ajax.php',
 			type: "POST",
@@ -465,16 +462,15 @@ jQuery(document).ready(function ($) {
 				if (result){
 					alert(result)
 					 elem.disabled = true
-					elem.classList.add(disabled)
+					elem.classList.add('disabled')
 				}else{
 					elem.disabled = false
-					elem.classList.remove(disabled)
+					elem.classList.remove('disabled')
 				}
 			},
 			error:function (result){
-				console.log(result);
-			}
 
+			}
 		});
  	}
 
@@ -485,7 +481,7 @@ jQuery(document).ready(function ($) {
 	$(document).on('click', '.quantity .btn-controls', function() {
 		data_param();
 	});
-	//console.log(disabledDays)
+
 	var date = new Date();
 		date.setDate(date.getDate());
 	$('.datepicker').datepicker({
@@ -501,7 +497,6 @@ jQuery(document).ready(function ($) {
 		numberOfMonths: 2,
 		minDate: date,
 		onSelect: function(dateText, inst, extensionRange) {
-			console.log('pckjwn')
 			$('[name=check_in]').val(extensionRange.startDateText);
 			$('[name=check_out]').val(extensionRange.endDateText);
 
@@ -511,7 +506,10 @@ jQuery(document).ready(function ($) {
 			$('[name=days]').val(days);
 			$('.clear-dates').fadeIn();
 
-			setTimeout(data_param(), 5000);
+			if (extensionRange.startDateText != extensionRange.endDateText){
+				data_param()
+			}
+
 
 
 			/*if (extensionRange.startDateText != extensionRange.endDateText) {
@@ -563,7 +561,6 @@ jQuery(document).ready(function ($) {
 			$('.overlay').fadeIn();
 		},
 		beforeShowDay : function(date){
-			//console.log(disabledDays)
 			let     m = date.getMonth(),
 					d = date.getDate(),
 					y = date.getFullYear();
@@ -648,7 +645,7 @@ jQuery(document).ready(function ($) {
 				'month' : $.datepicker.formatDate('yy-mm', new Date(year, month, 1))
 			},
 			success:function(result){
-				// console.log(result);
+
 			}
 		});
 
@@ -684,7 +681,7 @@ jQuery(document).ready(function ($) {
  
             },
 			success:function(result){
-				console.log(result);
+
 				if (result.status) {
 					$(cl+" .message").html(result.message);				
 					
@@ -738,7 +735,7 @@ jQuery(document).ready(function ($) {
 			dataType: "json",
 			data: data,
 			success:function(result){
-				console.log(result);
+
 
 				$('.message.update-fields').html(result.message);
 				
@@ -774,7 +771,6 @@ jQuery(document).ready(function ($) {
 			dataType: "json",
 			data: data,
 			success:function(result){
-				console.log(result);
 				
 				if (result.status) {
 					if (result.status == 'success') {
@@ -814,14 +810,12 @@ jQuery(document).ready(function ($) {
 
 	$('.register-email form').on("submit", function(){
 		let cl = '.register-email';
-		console.log('sdfs')
   		$.ajax({
 			url : '/wp-admin/admin-ajax.php',
 			type: "POST",
 			dataType : "json", 
 			data: $(cl+" form").serialize(),
 			success:function(result){
-				console.log(result);
 				if (result.status) {
 					$(cl+" .message").html(result.message);
 					$(cl+" .message").removeClass("success");
@@ -837,7 +831,6 @@ jQuery(document).ready(function ($) {
 				}
 			},
 			error: function(res){
-				console.log(res);
 				alert(res.responseText)
 			}
 		});
@@ -890,7 +883,6 @@ jQuery(document).ready(function ($) {
       		processData: false,
       		contentType: false,
 			success:function(result){
-				console.log(result);
 				if (result.status) {
 					if (result.status == 'success'){
 						window.location.reload();
@@ -911,7 +903,6 @@ jQuery(document).ready(function ($) {
 				'action' : 'delete_photo',
 			},
 			success:function(result){
-				console.log(result);
 				if (result.status) {
 					if (result.status == 'success'){
 						window.location.reload();
@@ -1084,7 +1075,6 @@ jQuery(document).ready(function ($) {
  
             },
 			success:function(result){
-				console.log(result);
 				if (result.status) {
 					$(cl+" .message").html(result.message);				
 					
@@ -1116,7 +1106,6 @@ jQuery(document).ready(function ($) {
 				'post_id' : id,
 			},
 			success:function(result){
-				console.log(result);
 				if (result.status == 'success') {
 					$(th).addClass('favorite-add');
 				} else if (result.status == 'remove') {
@@ -1250,7 +1239,6 @@ jQuery(document).ready(function ($) {
 				'term_id' : $(this).val()
 			},
 			success:function(result){
-				console.log(result);
  				$('select[name="city"]').html(result);
 			}
 		});

@@ -20,7 +20,7 @@ $postid = $post->ID;
 	<div class="room-left">
 		<h1 class="page-title"><?=the_title()?></h1>
 		<div class="room-name"><?=rooms_type(get_field('rooms_count'));?></div>
-		<div class="hotel-address wrap-address"><?=hotel_address($post->ID);?> <a href="#popup-map">Показать на карте</a></div>
+		<div class="hotel-address wrap-address"><?=hotel_address($postid);?> <a href="#popup-map">Показать на карте</a></div>
 		<div class="flexbox">
 			<div class="rating-wrap">
 				<div class="rating rating-orange"><?=rating(get_field('guest_rating'), 'number');?></div>

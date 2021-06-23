@@ -372,14 +372,12 @@ jQuery(document).ready(function ($) {
 					   var start = new Date(extensionRange.startDate);
 						end = new Date(extensionRange.endDate);
 						days = (end - start) / 1000 / 60 / 60 / 24;
-		
 					$('[name=days]').val(days);
 					$('.clear-dates').fadeIn();
-		
-					data_param();
-		
+
 		
 					if (extensionRange.startDateText != extensionRange.endDateText) {
+						data_param();
 						$('.overlay').fadeOut();
 						$('.ui-datepicker-multi-2').hide();
 		
@@ -408,7 +406,7 @@ jQuery(document).ready(function ($) {
 								'post_id' : $('input[name="post_id"]').val(),
 								'room_id' : $('input[name="room_id"]').val(),
 							},
-							beforeSend: function( xhr){
+							beforeSend: function(xhr){
 								$('.variants-rooms.ajax').html('');
 								$('.variants-rooms.ajax').append('<div class="spinner"></div>');
 							},
@@ -444,11 +442,13 @@ jQuery(document).ready(function ($) {
 	slider();
 
  	function data_param() {
+
 		$.ajax({
 			url : '/wp-admin/admin-ajax.php',
 			type: "POST",
 			dataType: "html",
 			data: {
+				'post_id': document.querySelector('[name="post_id"]').value,
 				'action' : 'data_param',
 				'counts_guests' : $('input[name="counts_guests"]').val(),
 				'check_in' : $('input[name="check_in"]').val(),
@@ -458,7 +458,18 @@ jQuery(document).ready(function ($) {
 				'babies' : $('input[name="babies"]').val(),
 			},
 			success:function(result){
-				console.log(result);
+				var elem = document.getElementById('single')
+				if (result){
+					alert(result)
+					 elem.disabled = true
+					elem.classList.add('disabled')
+				}else{
+					elem.disabled = false
+					elem.classList.remove('disabled')
+				}
+			},
+			error:function (result){
+
 			}
 		});
  	}
@@ -466,6 +477,7 @@ jQuery(document).ready(function ($) {
 	$('input[name="check_in"], input[name="check_out"], input[name="counts_guests"]').on("change", function(){
 		data_param();
 	});
+
 	$(document).on('click', '.quantity .btn-controls', function() {
 		data_param();
 	});
@@ -485,21 +497,22 @@ jQuery(document).ready(function ($) {
 		numberOfMonths: 2,
 		minDate: date,
 		onSelect: function(dateText, inst, extensionRange) {
-
 			$('[name=check_in]').val(extensionRange.startDateText);
 			$('[name=check_out]').val(extensionRange.endDateText);
 
        		var start = new Date(extensionRange.startDate);
         		end = new Date(extensionRange.endDate);
         		days = (end - start) / 1000 / 60 / 60 / 24;
-
 			$('[name=days]').val(days);
 			$('.clear-dates').fadeIn();
 
-			data_param();
+			if (extensionRange.startDateText != extensionRange.endDateText){
+				data_param()
+			}
 
 
-			if (extensionRange.startDateText != extensionRange.endDateText) {
+
+			/*if (extensionRange.startDateText != extensionRange.endDateText) {
 				$('.overlay').fadeOut();
 				$('.ui-datepicker-multi-2').hide();
 
@@ -540,12 +553,29 @@ jQuery(document).ready(function ($) {
 						}, 800);
 					}
 				});
-
-				$('html, body').animate({scrollTop: ($('#available-rooms').offset().top)-100}, 800);
-			}
+				if ($('#available-rooms').length)
+					$('html, body').animate({scrollTop: ($('#available-rooms').offset().top)-100}, 800);
+			}*/
 		},
 		beforeShow : function(){
 			$('.overlay').fadeIn();
+		},
+		beforeShowDay : function(date){
+			let     m = date.getMonth(),
+					d = date.getDate(),
+					y = date.getFullYear();
+
+			if(disabledDays) {
+				for (let i = 0; i < disabledDays.length; i++) {
+					if($.inArray(y + '-' + (m+1) + '-' + d,disabledDays) != -1) {
+						return [true, 'selected-day', 'День заблокирован'];
+					} else {
+						return [true, '', ''];
+					}
+				}
+			} else {
+				return [true, '', ''];
+			}
 		}
 	});
 
@@ -615,7 +645,7 @@ jQuery(document).ready(function ($) {
 				'month' : $.datepicker.formatDate('yy-mm', new Date(year, month, 1))
 			},
 			success:function(result){
-				// console.log(result);
+
 			}
 		});
 
@@ -651,7 +681,7 @@ jQuery(document).ready(function ($) {
  
             },
 			success:function(result){
-				console.log(result);
+
 				if (result.status) {
 					$(cl+" .message").html(result.message);				
 					
@@ -705,7 +735,7 @@ jQuery(document).ready(function ($) {
 			dataType: "json",
 			data: data,
 			success:function(result){
-				console.log(result);
+
 
 				$('.message.update-fields').html(result.message);
 				
@@ -741,7 +771,6 @@ jQuery(document).ready(function ($) {
 			dataType: "json",
 			data: data,
 			success:function(result){
-				console.log(result);
 				
 				if (result.status) {
 					if (result.status == 'success') {
@@ -781,14 +810,12 @@ jQuery(document).ready(function ($) {
 
 	$('.register-email form').on("submit", function(){
 		let cl = '.register-email';
-		console.log('sdfs')
   		$.ajax({
 			url : '/wp-admin/admin-ajax.php',
 			type: "POST",
 			dataType : "json", 
 			data: $(cl+" form").serialize(),
 			success:function(result){
-				console.log(result);
 				if (result.status) {
 					$(cl+" .message").html(result.message);
 					$(cl+" .message").removeClass("success");
@@ -804,7 +831,6 @@ jQuery(document).ready(function ($) {
 				}
 			},
 			error: function(res){
-				console.log(res);
 				alert(res.responseText)
 			}
 		});
@@ -857,7 +883,6 @@ jQuery(document).ready(function ($) {
       		processData: false,
       		contentType: false,
 			success:function(result){
-				console.log(result);
 				if (result.status) {
 					if (result.status == 'success'){
 						window.location.reload();
@@ -878,7 +903,6 @@ jQuery(document).ready(function ($) {
 				'action' : 'delete_photo',
 			},
 			success:function(result){
-				console.log(result);
 				if (result.status) {
 					if (result.status == 'success'){
 						window.location.reload();
@@ -1051,7 +1075,6 @@ jQuery(document).ready(function ($) {
  
             },
 			success:function(result){
-				console.log(result);
 				if (result.status) {
 					$(cl+" .message").html(result.message);				
 					
@@ -1083,7 +1106,6 @@ jQuery(document).ready(function ($) {
 				'post_id' : id,
 			},
 			success:function(result){
-				console.log(result);
 				if (result.status == 'success') {
 					$(th).addClass('favorite-add');
 				} else if (result.status == 'remove') {
@@ -1217,7 +1239,6 @@ jQuery(document).ready(function ($) {
 				'term_id' : $(this).val()
 			},
 			success:function(result){
-				console.log(result);
  				$('select[name="city"]').html(result);
 			}
 		});

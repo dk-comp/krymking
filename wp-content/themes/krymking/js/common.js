@@ -709,7 +709,7 @@ jQuery(document).ready(function ($) {
 
 	// }
  
-    $('select[name="currency"]').attr('disabled', 'disabled');
+    //$('select[name="currency"]').attr('disabled', 'disabled');
 
 	// Create room
 	$(document).on('change', '.create-room *', function() {

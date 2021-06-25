@@ -2064,9 +2064,7 @@ HERE;
 </html>
 HEREDOC;
 
-	
-	mail($email, $subject, $message, $headers);
-	//wp_mail($email, $subject, $message, $headers);
+	wp_mail($email, $subject, $message, $headers);
 }
 
 // Запрос на бронирование объекта

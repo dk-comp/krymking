@@ -124,29 +124,12 @@ $service[] = get_field_object('field_60092180474db', $post_id); // Парков�
 			</ul>
 			<?}?> -->
 
-<!--			<?/* if (get_field('fast_booking') == 'Включить') { */?>
+			<? if (get_field('fast_booking') == 'Включить') { ?>
 				<div class="fast-booking">Мгновенное бронирование</div>
-			--><?/* } */?>
+			<? } ?>
 
 			<? $posts = get_post( $post_id ); ?>
 			<? if( $posts->post_content ) { ?>
-
-
-                <div class="room-parameters room-param">
-                    
-                    <div class="hidden" style="display: block;">
-                        <ul class="attributes-line attributes-flex">
-                            <? foreach (fields($attr) as $field) { ?>
-                                <li><strong><?=$field['label'];?>: </strong> <?=$field['value'];?></li>
-                            <? } ?>
-                        </ul>
-                    </div>
-                </div>
-
-
-
-
-
 				<div class="desc">
 					<div class="block-header">Описание отеля</div>
 					<?=$posts->post_content;?>
@@ -156,7 +139,16 @@ $service[] = get_field_object('field_60092180474db', $post_id); // Парков�
 
 		</div>
  
-
+		<div class="room-parameters room-param">
+			<h3>Общие характеристики отеля <div class="param-collapse">Подробнее</div></h3>
+			<div class="hidden">
+				<ul class="attributes-line attributes-flex">
+				<? foreach (fields($attr) as $field) { ?>
+					<li><strong><?=$field['label'];?>: </strong> <?=$field['value'];?></li>
+				<? } ?>
+				</ul>
+			</div>
+		</div>
 
 		<div class="room-parameters room-param">
 			<h3>Внутри или на территории отеля <div class="param-collapse">Подробнее</div></h3>
@@ -207,8 +199,6 @@ $service[] = get_field_object('field_60092180474db', $post_id); // Парков�
  
 		if( $variants ) { ?>
 
-
-
 		<div class="variants" id="available-rooms">
 			<h2 class="block-header">Доступные номера</h2>
 			<div class="variants-rooms ajax">
@@ -217,35 +207,13 @@ $service[] = get_field_object('field_60092180474db', $post_id); // Парков�
 					'post_type' => 'hotels',
 					'post__in' => $variants
 				);
-
-				$query = new WP_Query($args);
-
-				if(!empty($query->posts)){
-
-				    usort($query->posts, function($a, $b) use ($post){
-
-				        if($a->ID === $post->ID)
-				            return 0;
-
-				        if($b->ID === $post->ID)
-				            return 1;
-
-				        return 0;
-
-                    });
-
-				    foreach ($query->posts as $post){
-
-				        setup_postdata($post);
-
-                        include(TEMPLATEPATH . '/front/room-card.php');
-
-                        wp_reset_postdata();
-
-                    }
-
-                }
-
+				query_posts( $args );
+				
+				while ( have_posts() ) {
+					the_post(); ?>
+					<?include(TEMPLATEPATH . '/front/room-card.php');?>
+				<? }
+				wp_reset_postdata();
 				?>
 			</div>
 		</div>

@@ -163,7 +163,9 @@ $postid = $post->ID;
 				<div class="attr-title">Расстояние до важных объектов</div>
 				<ul class="attributes-line">
 				<? foreach (get_field('field_601ac5ffd10b7') as $field) { ?>
-					<li><span><?=$field['objects']['label'];?>:</span> <?=$field['distance']['label'];?></li>
+					<?php if(isset($field['objects']['label'])):?>
+						<li><span><?=$field['objects']['label']?>:</span> <?=$field['distance']['label'];?></li>
+					<?php endif;?>
 				<? } ?>
 				</ul>
 			<? } ?>

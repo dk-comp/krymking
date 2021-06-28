@@ -90,6 +90,10 @@ function create_object(){
 		$result['message'] = $post_id->get_error_message();
 
 	} else {
+
+        $result['status'] = 'success';
+        $result['message'] = 'Изменения успешно сохранены!';
+
 		if ( !empty($_FILES['files']) ) {
 			if ( ! function_exists( 'wp_handle_upload' ) ) {
 			    require_once( ABSPATH . 'wp-admin/includes/file.php' );

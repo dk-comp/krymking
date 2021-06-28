@@ -256,7 +256,7 @@ if ( $query->have_posts() ) {
 			        <?foreach($taxonomies as $subcategory){?>
 			            <?if($subcategory->parent == $category->term_id){?>
 							<label class="filter-option">
-								<input type="checkbox" name="type_hotels[]" value="<?=$subcategory->term_id;?>" class="custom-input" <?=$subcategory->term_id == $_GET['type'] ? 'checked' : ''; ?>>
+								<input type="checkbox" name="type_hotels[]" value="<?=$subcategory->term_id?>" class="custom-input" <?=$subcategory->term_id == $_GET['type'] ? 'checked' : '' ?>>
 								<div class="check"></div>
 								<div class="filter-text"><?=$subcategory->name;?></div>
 							</label>

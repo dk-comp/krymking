@@ -1827,7 +1827,6 @@ function dates_free($postid) { ?>
 	var disabledDays = <?=$disabledDays?>;
 		date = new Date();
 		date.setDate(date.getDate());
-	
  
 	$('.free-dates').datepicker({
 		monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
@@ -2535,18 +2534,19 @@ function free_calendar($post_id = 0) { ?>
 	
 			}
 
-		}	
+		}
 		
-		$disabled_dates = json_encode($dates);
+		$disabledDays = json_encode($dates);
 	} else {
-		$disabled_dates = "null";
+		$disabledDays = "null";
 	} ?>
 
 	<script type="text/javascript">
 		
-		var disabledDays = <?=$disabled_dates?>;
+		var disabledDays = <?=$disabledDays?>;
 		
 		jQuery(document).ready(function ($) {
+			
 				date = new Date();
 				date.setDate(date.getDate());
 

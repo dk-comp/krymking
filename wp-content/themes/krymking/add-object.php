@@ -22,7 +22,7 @@ global $current_user;
 	 	<form action="<?=home_url("/profile/add/object/");?>" method="post">
 
 		 	<div class="object-content">
-			<? $_TAXONOMIES = get_terms(array(
+			<? $taxonomies = get_terms(array(
 			    'taxonomy'   => 'type',
 			    'count'      => true,
 			    'hide_empty' => false,

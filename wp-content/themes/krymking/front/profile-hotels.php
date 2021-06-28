@@ -275,21 +275,25 @@ function init() {
 		    <div class="fieldset-title">Нажмите для добавления фото</div>
 		    <input type="file" id="pro-image" name="files[]" style="display: none;" class="form-control" multiple>
 		</fieldset>
-		<div class="preview-images-zone">
-			<?foreach (get_field_object('field_5fe06e7c53d4b', $postid)['value'] as $image) { ?>
-			<div class="preview-image preview-show-<?=$image['ID'];?>">
-				<div class="image-cancel" data-no="<?=$image['ID'];?>">x</div>
-				<div class="image-zone">
-					<img id="pro-img-<?=$image['ID'];?>" src="<?=$image['url'];?>">
-					<input name="gallery[]" value="<?=$image['ID'];?>" type="hidden">
-				</div>
-				<div class="tools-edit-image">
-					<a href="javascript:void(0)" data-no="<?=$image['ID'];?>" class="btn-edit-image">Редактировать</a>
-				</div>
-			</div>
-			<? } ?>
-		</div>
-		<div class="create-note"><span>Не более 25 фотографий.</span> Размер файла <span>– не более 10 МБ</span>. Требования к фотографиям: <span>не должно быть адресов, телефонов, логотипов, других отметок.</span> Форматы фото: <span>jpg., gif., png.</span></div>
+        <?php $imagesArr = [];?>
+        <?php $imagesArr = get_field_object('field_5fe06e7c53d4b', $postid)['value'];?>
+        <?php if ($imagesArr !== false && isset($imagesArr)):?>
+            <div class="preview-images-zone">
+                <?foreach ($imagesArr as $image) { ?>
+                    <div class="preview-image preview-show-<?=$image['ID'];?>">
+                        <div class="image-cancel" data-no="<?=$image['ID'];?>">x</div>
+                        <div class="image-zone">
+                            <img id="pro-img-<?=$image['ID'];?>" src="<?=$image['url'];?>">
+                            <input name="gallery[]" value="<?=$image['ID'];?>" type="hidden">
+                        </div>
+                        <div class="tools-edit-image">
+                            <a href="javascript:void(0)" data-no="<?=$image['ID'];?>" class="btn-edit-image">Редактировать</a>
+                        </div>
+                    </div>
+                <? } ?>
+            </div>
+            <div class="create-note"><span>Не более 25 фотографий.</span> Размер файла <span>– не более 10 МБ</span>. Требования к фотографиям: <span>не должно быть адресов, телефонов, логотипов, других отметок.</span> Форматы фото: <span>jpg., gif., png.</span></div>
+        <?php endif;?>
 	</div>
 	<div class="navigation">
 		<div class="btn btn-prev">Назад</div>

@@ -6,9 +6,10 @@ function create_object(){
 		 	$status = 'pending';
 
 			$btn = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один объект</a>';
+            //$btn2 = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один номер</a>';
 
 			$result['status'] = 'success';
-			$result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. '.$btn.' ';
+            //$result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. '.$btn.'<br>'.$btn2;
 		} else {
 			$status = 'draft';
 

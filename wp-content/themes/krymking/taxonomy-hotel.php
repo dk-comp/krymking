@@ -27,15 +27,15 @@ $Aposts = $query->query($args);
 <div class="wrapper">
  
 
- <? if(function_exists('bcn_display')) {?>
+ <?php if(function_exists('bcn_display')) {?>
   <div class="breadcrumbs">
     <?=bcn_display();?>
   </div>   
-<? } ?>
+<?php } ?>
 
 <div class="variants-info">Посуточная аренда жилья в <?//=$parent_id != 0 ? '' : 'регионе'; ?> <?=$category_title;?> <span>Найдено <?=num_word( count($Aposts), array("вариант","варианта","вариантов") ); ?></span></div>
 <div class="sub-category">
-<? $taxonomy = 'hotel';
+<?php $taxonomy = 'hotel';
   $term = get_queried_object();
 
   $children = get_terms( 
@@ -43,13 +43,15 @@ $Aposts = $query->query($args);
       'parent' => $term->term_id,
       'hide_empty' => false
     )
-  );
-  foreach ($children as $subcat) { 
-?>
-  <div class="category-item">
-    <a href="<?=get_term_link($subcat->term_id, $taxonomy);?>" class="category-name"><?=$subcat->name;?></a>
-  </div>
-<? } ?>
+  );?>
+	<div class="category-item">
+	  <a href="<?=get_term_link($term->term_id, $taxonomy)?>" class="category-name"><?=$term->name?></a>
+	</div>
+	<?php foreach ($children as $subcat):?>
+		<div class="category-item">
+		<a href="<?=get_term_link($subcat->term_id, $taxonomy);?>" class="category-name"><?=$subcat->name;?></a>
+		</div>
+	<?php endforeach; ?>
 </div>
   <div class="overlay-filter"></div>
 	<div class="page-wrap flex-content">

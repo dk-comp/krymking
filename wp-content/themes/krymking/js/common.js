@@ -375,7 +375,6 @@ jQuery(document).ready(function ($) {
 					$('[name=days]').val(days);
 					$('.clear-dates').fadeIn();
 
-
 					if (extensionRange.startDateText != extensionRange.endDateText) {
 						data_param();
 						$('.overlay').fadeOut();
@@ -507,10 +506,10 @@ jQuery(document).ready(function ($) {
 			$('.clear-dates').fadeIn();
 
 			if (extensionRange.startDateText != extensionRange.endDateText){
+				$('.overlay').fadeOut();
+				$('.ui-datepicker-multi-2').hide();
 				data_param()
 			}
-
-
 
 			/*if (extensionRange.startDateText != extensionRange.endDateText) {
 				$('.overlay').fadeOut();

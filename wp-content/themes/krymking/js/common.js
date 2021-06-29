@@ -375,7 +375,6 @@ jQuery(document).ready(function ($) {
 					$('[name=days]').val(days);
 					$('.clear-dates').fadeIn();
 
-		
 					if (extensionRange.startDateText != extensionRange.endDateText) {
 						data_param();
 						$('.overlay').fadeOut();
@@ -507,10 +506,10 @@ jQuery(document).ready(function ($) {
 			$('.clear-dates').fadeIn();
 
 			if (extensionRange.startDateText != extensionRange.endDateText){
+				$('.overlay').fadeOut();
+				$('.ui-datepicker-multi-2').hide();
 				data_param()
 			}
-
-
 
 			/*if (extensionRange.startDateText != extensionRange.endDateText) {
 				$('.overlay').fadeOut();
@@ -565,7 +564,7 @@ jQuery(document).ready(function ($) {
 					d = date.getDate(),
 					y = date.getFullYear();
 
-			if(disabledDays) {
+			if(typeof disabledDays != 'undefined' && disabledDays) {
 				for (let i = 0; i < disabledDays.length; i++) {
 					if($.inArray(y + '-' + (m+1) + '-' + d,disabledDays) != -1) {
 						return [true, 'selected-day', 'День заблокирован'];
@@ -596,6 +595,23 @@ jQuery(document).ready(function ($) {
 		},
 		beforeShow : function(){
 			$('.overlay').fadeIn();
+		},
+		beforeShowDay : function(date){
+			let     m = date.getMonth(),
+					d = date.getDate(),
+					y = date.getFullYear();
+
+			if(disabledDays) {
+				for (let i = 0; i < disabledDays.length; i++) {
+					if($.inArray(y + '-' + (m+1) + '-' + d,disabledDays) != -1) {
+						return [true, 'selected-day', 'День заблокирован'];
+					} else {
+						return [true, '', ''];
+					}
+				}
+			} else {
+				return [true, '', ''];
+			}
 		}
 	});
 
@@ -735,7 +751,6 @@ jQuery(document).ready(function ($) {
 			dataType: "json",
 			data: data,
 			success:function(result){
-
 
 				$('.message.update-fields').html(result.message);
 				

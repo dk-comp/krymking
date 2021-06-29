@@ -6,9 +6,10 @@ function create_object(){
 		 	$status = 'pending';
 
 			$btn = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один объект</a>';
+            $btn2 = '<a href="<?=home_url(\'/objects/edit/\');?>?post=<?=get_the_ID();?>&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
 
 			$result['status'] = 'success';
-			$result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. '.$btn.' ';
+            $result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. '.$btn.'<br>'.$btn2;
 		} else {
 			$status = 'draft';
 
@@ -90,6 +91,10 @@ function create_object(){
 		$result['message'] = $post_id->get_error_message();
 
 	} else {
+
+        $result['status'] = 'success';
+        $result['message'] = 'Изменения успешно сохранены!';
+
 		if ( !empty($_FILES['files']) ) {
 			if ( ! function_exists( 'wp_handle_upload' ) ) {
 			    require_once( ABSPATH . 'wp-admin/includes/file.php' );

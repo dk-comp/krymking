@@ -21,7 +21,7 @@ $args = array(
 $query = new WP_Query;
 
 $Aposts = $query->query($args);
-
+//$termID = get_term_children($category->term_id, $category->slug);
 ?>
 <div class="headLine"></div>
 <div class="wrapper">
@@ -35,10 +35,11 @@ $Aposts = $query->query($args);
 
 <div class="variants-info">Посуточная аренда жилья в <?//=$parent_id != 0 ? '' : 'регионе'; ?> <?=$category_title;?> <span>Найдено <?=num_word( count($Aposts), array("вариант","варианта","вариантов") ); ?></span></div>
 <div class="sub-category">
-<?php $taxonomy = 'hotel';
-  $term = get_queried_object();
-
-  $children = get_terms( 
+<?php
+	$taxonomy = 'hotel';
+	$term = get_queried_object();
+	
+	$children = get_terms(
     $term->taxonomy, array(
       'parent' => $term->term_id,
       'hide_empty' => false
@@ -49,7 +50,7 @@ $Aposts = $query->query($args);
 	</div>
 	<?php foreach ($children as $subcat):?>
 		<div class="category-item">
-		<a href="<?=get_term_link($subcat->term_id, $taxonomy);?>" class="category-name"><?=$subcat->name;?></a>
+			<a href="<?=get_term_link($subcat->term_id, $taxonomy)?>" class="category-name"><?=$subcat->name?></a>
 		</div>
 	<?php endforeach; ?>
 </div>
@@ -81,15 +82,16 @@ $Aposts = $query->query($args);
         </div>
 			</div>
 
-		  <div class="ajax">
+	    <div class="ajax">
 				<div id="search-map"></div>
 				<div class="hotels-list">
+					
                     <?php foreach ($Aposts as $post){
-
-                        setup_postdata($post);
-
-                        get_template_part('front/object-card');
-
+                    	
+	                    setup_postdata($post);
+	
+	                    get_template_part('front/object-card');
+	                    
                     }
 
                     wp_reset_postdata();
@@ -100,7 +102,7 @@ $Aposts = $query->query($args);
 				<?/* endwhile;
         else: echo "По вашему запросу ничего не найдено";
 				endif; */?>
-		    	</div>
+		</div>
 
           <script type="text/javascript">
 

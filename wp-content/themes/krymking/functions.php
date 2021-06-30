@@ -1415,6 +1415,7 @@ function data_param() {
 	$countBooking = days($_POST['check_in'], $_POST['check_out']);
 	$countsGuests = get_field('guests_count', $post_id);
 
+
 	if ( $fieldDates ) {
 		
 		$dates = [];

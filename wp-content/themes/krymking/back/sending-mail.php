@@ -1230,8 +1230,9 @@ td .es-button-border-2:hover {
                       <td align="center" style="Margin:0;padding-top:15px;padding-left:15px;padding-right:15px;padding-bottom:40px">
                         <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:24px;color:#333333;font-size:16px">
 HERE;
-
-    $message .= "Уважаемый Пользователь! Добро пожаловать на сайт Krymking.ru. <br>";
+    $message .= 'К сожалению, Ваше объявление не прошло модерацию и Ваш объект жилья не опубликован на Krymking.ru. ';
+    $message .= 'Узнать подробности Вы сможете, связавшись с нашей <a href="'.home_url("/about-us/support/").'">Службой поддержки.</a>.';
+    /*$message .= "Уважаемый Пользователь! Добро пожаловать на сайт Krymking.ru. <br>";
     $message .= "Всегда готовы помочьвам в краткосрочной аренде жилья для отдыха в Крыму. <br>";
     $message .= "По всем вопросам работы нашего сайта Вы сможете найти ответы в разделе <a style=\"text-decoration: none; color: #0000ff;\" href='".home_url("/guests-owners")."'>Помощь</a>. <br>";
     $message .= "С уважением, <br>";
@@ -1244,7 +1245,7 @@ HERE;
     $message .= "5.Эффективная служба поддержки! <br>";
     $message .= "6.Гарантия успешного заселения! <br>";
     $message .= "7.Высокая скорость обслуживания! <br>";
-    $message .= "8.Бесплатные услуги бронирования! <br>";
+    $message .= "8.Бесплатные услуги бронирования! <br>";*/
     $message .= <<<HEREDOC
 </p>
                       </td> 
@@ -1573,8 +1574,20 @@ td .es-button-border-2:hover {
                         <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:24px;color:#333333;font-size:16px">
 HERE;
 
-    $message .= 'К сожалению, Ваше объявление не прошло модерацию и Ваш объект жилья не опубликован на Krymking.ru. ';
-    $message .= 'Узнать подробности Вы сможете, связавшись с нашей <a href="'.home_url("/about-us/support/").'">Службой поддержки</a>.';
+    $message .= "Уважаемый Пользователь! Добро пожаловать на сайт Krymking.ru. <br>";
+    $message .= "Всегда готовы помочьвам в краткосрочной аренде жилья для отдыха в Крыму. <br>";
+    $message .= "По всем вопросам работы нашего сайта Вы сможете найти ответы в разделе <a style=\"text-decoration: none; color: #0000ff;\" href='".home_url("/guests-owners")."'>Помощь</a>. <br>";
+    $message .= "С уважением, <br>";
+    $message .= "команда Krymking.ru <br>";
+    $message .= "Преимущества бронирования с Krymking.ru <br>";
+    $message .= "1.Мы крымчане и Крым наш дом! <br>";
+    $message .= "2.Вы наш приоритет! <br>";
+    $message .= "3.Порядочность и качество – наше кредо! <br>";
+    $message .= "4.Простота и доступность – наши принципы! <br>";
+    $message .= "5.Эффективная служба поддержки! <br>";
+    $message .= "6.Гарантия успешного заселения! <br>";
+    $message .= "7.Высокая скорость обслуживания! <br>";
+    $message .= "8.Бесплатные услуги бронирования! <br>";
 
     $message .= <<<HEREDOC
 </p>

@@ -1409,50 +1409,36 @@ add_action('wp_ajax_search_suggest','search_suggest');
 
 function data_param() {
 
-	$post_id = $_POST['post_id'];
-	$fieldDates = get_field('free_dates', $post_id);
-	$minimumBooking = get_field('minimum_booking', $post_id)['value'];
-	$countBooking = days($_POST['check_in'], $_POST['check_out']);
-	$countsGuests = get_field('guests_count', $post_id);
+    $post_id = $_POST['post_id'];
+    $fieldDates = get_field('free_dates', $post_id);
+    $minimumBooking = get_field('minimum_booking', $post_id)['value'];
+    $countBooking = days($_POST['check_in'], $_POST['check_out']);
+    $countsGuests = get_field('guests_count', $post_id);
 
 
-	if ( $fieldDates ) {
-		
-		$dates = [];
-		
-		foreach ($fieldDates as $date) {
-			
-			$interval_date = date_diff(date_create($date['date_from']), date_create($date['date_to']))->days+1;
-			
-			for($i = 1; $i <= $interval_date ; $i++){
-				
-				$dates[] = date('d.m.Y',(strtotime($date['date_from'])+86400*($i-1)));
-				
-			}
-			
-		}
-		
-	} else {
-<<<<<<< HEAD
-		
-		$flag = false;
-		$result = filters(true);
-		foreach($result as $res){
-			if($res->ID === $_POST['post_id']){
-				$flag = true;
-				break;
-			}
-		}
-		
-	}
-	
-=======
-		$disabled_dates = "null";
-	}
-	
-	$flag = false;
+    if ( $fieldDates ) {
 
-	if(!empty($post_id)){
+        $dates = [];
+
+        foreach ($fieldDates as $date) {
+
+            $interval_date = date_diff(date_create($date['date_from']), date_create($date['date_to']))->days+1;
+
+            for($i = 1; $i <= $interval_date ; $i++){
+
+                $dates[] = date('d.m.Y',(strtotime($date['date_from'])+86400*($i-1)));
+
+            }
+
+        }
+
+    } else {
+        $disabled_dates = "null";
+    }
+
+    $flag = false;
+
+    if(!empty($post_id)){
 
         $result = filters(true);
 
@@ -1465,37 +1451,36 @@ function data_param() {
 
     }else{
 
-	    $flag = true;
+        $flag = true;
 
     }
 
 
->>>>>>> 952f5cae04d2e8f044e2426957467f20af56fe0f
-	if($flag){
-		
-		$_SESSION['post_id'] = $_POST['post_id'];
-		$_SESSION['check_in'] = $_POST['check_in'];
-		$_SESSION['check_out'] = $_POST['check_out'];
-		
-		$_SESSION['adults'] = $_POST['adults'];
-		$_SESSION['children'] = $_POST['children'];
-		$_SESSION['babies'] = $_POST['babies'];
-		
-		$_SESSION['counts_guests'] = $_POST['counts_guests'];
-	}else{
-		if(in_array($_POST['check_in'], $dates, false) || in_array($_POST['check_out'], $dates,false)){
-			echo 'Вы не можете забронировать это жилье на выбранный период, т.к. оно на этот период занято. Посмотрите, пожалуйста, свободные даты в Календаре бронирования' . '<br>';
-		}
-		if($countBooking < $minimumBooking){
-			echo 'Вы не можете забронировать это жилье на выбранный период, т.к. минимальный период проживания в нем — ' . $minimumBooking .
-					' количество суток. Увеличьте период проживания до необходимого минимального кол-ва суток';
-		}
-		if($countsGuests < ($_POST['adults'] + $_POST['children'])){
-			echo 'Вы не можете забронировать это жилье, т.к. в нем возможно проживание не более - '. $countsGuests .' человек. Посмотрите, пожалуйста, другие объекты на нашем сайте';
-		}
-		
-	}
-	exit;
+    if($flag){
+
+        $_SESSION['post_id'] = $_POST['post_id'];
+        $_SESSION['check_in'] = $_POST['check_in'];
+        $_SESSION['check_out'] = $_POST['check_out'];
+
+        $_SESSION['adults'] = $_POST['adults'];
+        $_SESSION['children'] = $_POST['children'];
+        $_SESSION['babies'] = $_POST['babies'];
+
+        $_SESSION['counts_guests'] = $_POST['counts_guests'];
+    }else{
+        if(in_array($_POST['check_in'], $dates, false) || in_array($_POST['check_out'], $dates,false)){
+            echo 'Вы не можете забронировать это жилье на выбранный период, т.к. оно на этот период занято. Посмотрите, пожалуйста, свободные даты в Календаре бронирования' . '<br>';
+        }
+        if($countBooking < $minimumBooking){
+            echo 'Вы не можете забронировать это жилье на выбранный период, т.к. минимальный период проживания в нем — ' . $minimumBooking .
+                ' количество суток. Увеличьте период проживания до необходимого минимального кол-ва суток';
+        }
+        if($countsGuests < ($_POST['adults'] + $_POST['children'])){
+            echo 'Вы не можете забронировать это жилье, т.к. в нем возможно проживание не более - '. $countsGuests .' человек. Посмотрите, пожалуйста, другие объекты на нашем сайте';
+        }
+
+    }
+    exit;
 }
 add_action('wp_ajax_nopriv_data_param','data_param');
 add_action('wp_ajax_data_param','data_param');

@@ -1430,19 +1430,18 @@ function data_param() {
 		}
 		
 	} else {
-		$disabled_dates = "null";
-	}
-	
-	$flag = false;
-	$result = filters(true);
-	foreach($result as $res){
-		if($res->ID === $_POST['post_id']){
-			$flag = true;
-			break;
+		
+		$flag = false;
+		$result = filters(true);
+		foreach($result as $res){
+			if($res->ID === $_POST['post_id']){
+				$flag = true;
+				break;
+			}
 		}
+		
 	}
 	
-	$a=1;
 	if($flag){
 		
 		$_SESSION['post_id'] = $_POST['post_id'];

@@ -1396,7 +1396,7 @@ function search_suggest(){
 	$terms = get_terms( $args );
 	if ($terms) {
 		foreach ($terms as $term) { ?>
-			<li data-link='<?=get_category_link($term->term_id);?>'><div class="suggest-point"></div><?=$term->name;?></li>
+			<li data-link='<?=get_category_link($term->term_id);?>?main_page_search=true' data-id="<?=$term->term_id?>"><div class="suggest-point"></div><?=$term->name;?></li>
 		<?php } ?>
 	<? } else { ?>
 		<li class="error">Ничего не найдено!</li>
@@ -1408,11 +1408,13 @@ add_action('wp_ajax_nopriv_search_suggest','search_suggest');
 add_action('wp_ajax_search_suggest','search_suggest');
 
 function data_param() {
+
 	$post_id = $_POST['post_id'];
 	$fieldDates = get_field('free_dates', $post_id);
 	$minimumBooking = get_field('minimum_booking', $post_id)['value'];
 	$countBooking = days($_POST['check_in'], $_POST['check_out']);
 	$countsGuests = get_field('guests_count', $post_id);
+
 	if ( $fieldDates ) {
 		
 		$dates = [];
@@ -1434,15 +1436,25 @@ function data_param() {
 	}
 	
 	$flag = false;
-	$result = filters(true);
-	foreach($result as $res){
-		if($res->ID === $_POST['post_id']){
-			$flag = true;
-			break;
-		}
-	}
-	
-	$a=1;
+
+	if(!empty($post_id)){
+
+        $result = filters(true);
+
+        foreach($result as $res){
+            if($res->ID === $_POST['post_id']){
+                $flag = true;
+                break;
+            }
+        }
+
+    }else{
+
+	    $flag = true;
+
+    }
+
+
 	if($flag){
 		
 		$_SESSION['post_id'] = $_POST['post_id'];

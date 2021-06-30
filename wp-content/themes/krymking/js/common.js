@@ -442,12 +442,16 @@ jQuery(document).ready(function ($) {
 
  	function data_param() {
 
+ 		let postRow = document.querySelector('[name="post_id"]')
+
+		let postId = postRow ? postRow.value : 0
+
 		$.ajax({
 			url : '/wp-admin/admin-ajax.php',
 			type: "POST",
 			dataType: "html",
 			data: {
-				'post_id': document.querySelector('[name="post_id"]').value,
+				'post_id': postId,
 				'action' : 'data_param',
 				'counts_guests' : $('input[name="counts_guests"]').val(),
 				'check_in' : $('input[name="check_in"]').val(),
@@ -458,19 +462,27 @@ jQuery(document).ready(function ($) {
 			},
 			success:function(result){
 				var elem = document.getElementById('single')
-				if (result){
-					alert(result)
-					 elem.disabled = true
-					elem.classList.add('disabled')
-				}else{
-					elem.disabled = false
-					elem.classList.remove('disabled')
+
+				if(elem){
+
+					if (result){
+						alert(result)
+						elem.disabled = true
+						elem.classList.add('disabled')
+					}else{
+						elem.disabled = false
+						elem.classList.remove('disabled')
+					}
+
 				}
+
 			},
 			error:function (result){
 
 			}
 		});
+
+
  	}
 
 	$('input[name="check_in"], input[name="check_out"], input[name="counts_guests"]').on("change", function(){
@@ -509,6 +521,46 @@ jQuery(document).ready(function ($) {
 				$('.overlay').fadeOut();
 				$('.ui-datepicker-multi-2').hide();
 				data_param()
+
+				$.ajax({
+					url : '/wp-admin/admin-ajax.php',
+					type: "POST",
+					dataType: "html",
+					data: {
+						'action' : 'payment_calc',
+						'price' : $('.booking-form input[name="price"]').val(),
+						'days' : days
+					},
+					success:function(result){
+
+						$('.ajax-calc').html(result);
+
+					}
+				});
+
+				$.ajax({
+					url : '/wp-admin/admin-ajax.php',
+					type: "POST",
+					dataType: "html",
+					data: {
+						'action' : 'hotel_room',
+						'post_id' : $('input[name="post_id"]').val(),
+						'room_id' : $('input[name="room_id"]').val(),
+					},
+					beforeSend: function( xhr){
+						$('.variants-rooms.ajax').html('');
+						$('.variants-rooms.ajax').append('<div class="spinner"></div>');
+					},
+					success:function(result){
+						setTimeout(function(){
+							$('.variants-rooms.ajax').html(result);
+
+							slider();
+						}, 800);
+					}
+				});
+				if ($('#available-rooms').length)
+					$('html, body').animate({scrollTop: ($('#available-rooms').offset().top)-100}, 800);
 			}
 
 			/*if (extensionRange.startDateText != extensionRange.endDateText) {
@@ -1059,11 +1111,13 @@ jQuery(document).ready(function ($) {
 	});
 
 
-	
+	if(location.search.indexOf('main_page_search') !== -1){
 
-	// setTimeout(function(){
-	// 	$('.archive .filters .sidebar-form-content .btn-submit').click();
-	// }, 800);
+		setTimeout(function(){
+			$('.archive .filters .sidebar-form-content .btn-submit').click();
+		}, 800);
+
+	}
 
 
     $('.btn-view').click(function() {

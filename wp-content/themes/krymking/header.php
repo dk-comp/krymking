@@ -187,7 +187,7 @@ global $current_user;
 				</div>
 			</div>
 		<?php endforeach;?>
-		<?php $a=1?>
+		<?php //$a=1?>
 	<?php endif;?>
 <?php endif;?>
  

@@ -22,6 +22,7 @@ if ( ! defined( '_S_VERSION' ) ) {
 			87 => 'Пансионаты',
 	];
 
+
 if ( ! function_exists( 'krymking_setup' ) ) :
 	/**
 	 * Sets up theme defaults and registers support for various WordPress features.

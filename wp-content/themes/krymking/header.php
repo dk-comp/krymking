@@ -129,39 +129,102 @@ global $current_user;
 <?php global $_CATEGORIES?>
 
 <?php if(!empty($_CATEGORIES)):?>
-	
-	<?php	global $_TAXONOMIES;
+	<?php
+
+	global $_TAXONOMIES;
 	
 	$_TAXONOMIES = get_terms( array(
        'taxonomy' => 'hotel',
        'hide_empty' => false,
        )
 	);
-	
-	$_PLACES = get_terms( array(
-         'taxonomy' => 'type',
-         'hide_empty' => false,
-        )
-	);
-	
-	$_PLACES_COUNT = [];
-	
+
+    $_TYPES = get_terms([
+        'taxonomy' => 'type',
+        'hide_empty' => false,
+    ]);
+
+    $_CATEGORIES_FULL = [];
+
+    if(!empty($_TYPES)){
+
+        foreach ($_TYPES as $item){
+
+            if(isset($_CATEGORIES[$item->term_id])){
+
+                $_CATEGORIES_FULL[$item->term_id] = $item;
+
+                $_CATEGORIES_FULL[$item->term_id]->POSTS = [];
+
+                $args = array(
+                    'post_type' => 'hotels',
+                    'type'=> $item->slug,
+                    'numposts' => 0
+                );
+
+                $query = new WP_Query;
+
+                $data = $query->query($args);
+
+                if($data){
+
+                    foreach ($data as $value){
+
+                        $_CATEGORIES_FULL[$item->term_id]->POSTS[$value->ID] = $value;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
 	$_TAXONOMIES_POPULAR = [];
-	
+
 	global $_TAXONOMIES_POPULAR;
 	
 	foreach($_TAXONOMIES as $key => $term){
+
 		$args = array(
-			'post_type' => 'hotels',
-			'hotel'=> $term->slug,
-			'numposts' => 0
+				'post_type' => 'hotels',
+				'hotel'=> $term->slug,
+				'numposts' => 0
 		);
 		
 		$query = new WP_Query;
 		
 		$Aposts = $query->query($args);
-		
-		$_TAXONOMIES[$key]->objectsCount = count($Aposts);
+
+		$postsByIds = [];
+
+		if($Aposts){
+
+		    foreach ($Aposts as $item){
+
+		        $postsByIds[$item->ID] = $item;
+
+            }
+
+        }
+
+        $_TAXONOMIES[$key]->objectsCount = count($Aposts);
+
+        $_TAXONOMIES[$key]->objectsCountParts = [];
+
+		foreach ($_CATEGORIES_FULL as $id => $item){
+
+		    if(!isset($_TAXONOMIES[$key]->objectsCountParts[$id])) $_TAXONOMIES[$key]->objectsCountParts[$id] = 0;
+
+		    foreach ($item->POSTS as $k => $v){
+
+		        if(isset($postsByIds[$k])) $_TAXONOMIES[$key]->objectsCountParts[$id]++;
+
+            }
+
+        }
 		
 		$_TAXONOMIES_POPULAR[$term->term_id] = $_TAXONOMIES[$key];
 		
@@ -170,31 +233,27 @@ global $current_user;
 	?>
 	
 	<?php if(!empty($_TAXONOMIES)):?>
+
 		<?php foreach($_CATEGORIES as $catId => $catName):?>
+
 			<div class="popup popup-objects popup-<?=$catId?>">
 				<div class="popup-content">
 					<div class="popup-row">
+
 						<?php foreach($_TAXONOMIES as $category){
 							
-							if($category->parent == 0){?>
+							if($category->parent == 0){
+								 ?>
 								<div class="popup-item">
 									<h3><?=$category->name?></h3>
 									<ul class="city-list">
-										<?php if($category->term_id !== 9):?>
-											
-											<li><a href="<?=get_category_link($category->term_id)?>?type=<?=$catId?>"><?=$category->name?>(<?=$category->objectsCount?>)</a></li>
-											
-										<?php endif;?>
-										
-										<?php foreach($_TAXONOMIES as $subcategory):?>
-											
-											<?php if($subcategory->parent == $category->term_id):?>
-												
-												<li><a href="<?=get_category_link($subcategory->term_id)?>?type=<?=$catId?>"><?=$subcategory->name?>(<?=$subcategory->objectsCount?>)</a></li>
-												
-											<?php endif;?>
-											
-										<?php endforeach; ?>
+										<?php if($category->term_id !== 9) {?>
+											<li><a href="<?=get_category_link($category->term_id)?>?type=<?=$catId?>"><?=$category->name?>(<?=$category->objectsCountParts[$catId]?>)</a></li>
+											<?php
+										}?>
+										<?php foreach($_TAXONOMIES as $subcategory){?><?php if($subcategory->parent == $category->term_id){?>
+											<li><a href="<?=get_category_link($subcategory->term_id);?>?type=<?=$catId?>"><?=$subcategory->name;?>(<?=$subcategory->objectsCountParts[$catId]?>)</a></li>
+										<?php } ?><?php } ?>
 									</ul>
 								</div>
 								<?php
@@ -204,9 +263,8 @@ global $current_user;
 				</div>
 			</div>
 		<?php endforeach;?>
-		
+		<?php //$a=1?>
 	<?php endif;?>
-	
 <?php endif;?>
  
 <div class="popup popup-currency">

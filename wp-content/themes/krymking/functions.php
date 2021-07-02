@@ -1434,28 +1434,27 @@ function data_param() {
         }
 
     } else {
-        $disabled_dates = "null";
+	    $flag = false;
+	
+	    if(!empty($post_id)){
+		
+		    $result = filters(true);
+		
+		    foreach($result as $res){
+			    if($res->ID === $_POST['post_id']){
+				    $flag = true;
+				    break;
+			    }
+		    }
+		
+	    }else{
+		
+		    $flag = true;
+		
+	    }
+	    
     }
-
-    $flag = false;
-
-    if(!empty($post_id)){
-
-        $result = filters(true);
-
-        foreach($result as $res){
-            if($res->ID === $_POST['post_id']){
-                $flag = true;
-                break;
-            }
-        }
-
-    }else{
-
-        $flag = true;
-
-    }
-
+    
 
     if($flag){
 

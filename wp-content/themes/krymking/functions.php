@@ -1454,7 +1454,6 @@ function data_param() {
 	    
     }
     
-
     if($flag){
 
         $_SESSION['post_id'] = $_POST['post_id'];
@@ -1468,7 +1467,7 @@ function data_param() {
         $_SESSION['counts_guests'] = $_POST['counts_guests'];
     }else{
         if(in_array($_POST['check_in'], $dates, false) || in_array($_POST['check_out'], $dates,false)){
-            echo 'Вы не можете забронировать это жилье на выбранный период, т.к. оно на этот период занято. Посмотрите, пожалуйста, свободные даты в Календаре бронирования' . '<br>';
+            echo 'Вы не можете забронировать это жилье на выбранный период, т.к. оно на этот период занято. Посмотрите, пожалуйста, свободные даты в Календаре бронирования';
         }
         if($countBooking < $minimumBooking){
             echo 'Вы не можете забронировать это жилье на выбранный период, т.к. минимальный период проживания в нем — ' . $minimumBooking .

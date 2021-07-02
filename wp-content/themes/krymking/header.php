@@ -129,22 +129,30 @@ global $current_user;
 <?php global $_CATEGORIES?>
 
 <?php if(!empty($_CATEGORIES)):?>
-	<?php
-	global $_TAXONOMIES;
+	
+	<?php	global $_TAXONOMIES;
 	
 	$_TAXONOMIES = get_terms( array(
        'taxonomy' => 'hotel',
        'hide_empty' => false,
        )
 	);
+	
+	$_PLACES = get_terms( array(
+         'taxonomy' => 'type',
+         'hide_empty' => false,
+        )
+	);
+	
 	$_TAXONOMIES_POPULAR = [];
+	
 	global $_TAXONOMIES_POPULAR;
 	
 	foreach($_TAXONOMIES as $key => $term){
 		$args = array(
-				'post_type' => 'hotels',
-				'hotel'=> $term->slug,
-				'numposts' => 0
+			'post_type' => 'hotels',
+			'hotel'=> $term->slug,
+			'numposts' => 0
 		);
 		
 		$query = new WP_Query;
@@ -154,6 +162,26 @@ global $current_user;
 		$_TAXONOMIES[$key]->objectsCount = count($Aposts);
 		
 		$_TAXONOMIES_POPULAR[$term->term_id] = $_TAXONOMIES[$key];
+		
+		if($_TAXONOMIES[$key]->objectsCount != 0){
+		
+			$a[] = $_TAXONOMIES[$key];
+			
+			foreach($a as $k => $itemPlace){
+				
+				foreach($_PLACES as $keys => $val){
+					
+					$args = [
+							'post_type' => 'hotels',
+							'hotels' => $itemPlace->slug,
+							'hide_empty' => true,
+					];
+					
+				}
+				
+			}
+		
+		}
 		
 	}
 	
@@ -166,18 +194,25 @@ global $current_user;
 					<div class="popup-row">
 						<?php foreach($_TAXONOMIES as $category){
 							
-							if($category->parent == 0){
-								 ?>
+							if($category->parent == 0){?>
 								<div class="popup-item">
 									<h3><?=$category->name?></h3>
 									<ul class="city-list">
-										<?php if($category->term_id !== 9) {?>
+										<?php if($category->term_id !== 9):?>
+											
 											<li><a href="<?=get_category_link($category->term_id)?>?type=<?=$catId?>"><?=$category->name?>(<?=$category->objectsCount?>)</a></li>
-											<?php
-										}?>
-										<?php foreach($_TAXONOMIES as $subcategory){?><?php if($subcategory->parent == $category->term_id){?>
-											<li><a href="<?=get_category_link($subcategory->term_id);?>?type=<?=$catId?>"><?=$subcategory->name;?>(<?=$subcategory->objectsCount?>)</a></li>
-										<?php } ?><?php } ?>
+											
+										<?php endif;?>
+										
+										<?php foreach($_TAXONOMIES as $subcategory):?>
+											
+											<?php if($subcategory->parent == $category->term_id):?>
+												
+												<li><a href="<?=get_category_link($subcategory->term_id)?>?type=<?=$catId?>"><?=$subcategory->name?>(<?=$subcategory->objectsCount?>)</a></li>
+												
+											<?php endif;?>
+											
+										<?php endforeach; ?>
 									</ul>
 								</div>
 								<?php
@@ -187,8 +222,9 @@ global $current_user;
 				</div>
 			</div>
 		<?php endforeach;?>
-		<?php //$a=1?>
+		
 	<?php endif;?>
+	<?php $b=1?>
 <?php endif;?>
  
 <div class="popup popup-currency">

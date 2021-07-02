@@ -144,6 +144,8 @@ global $current_user;
         )
 	);
 	
+	$_PLACES_COUNT = [];
+	
 	$_TAXONOMIES_POPULAR = [];
 	
 	global $_TAXONOMIES_POPULAR;
@@ -162,26 +164,6 @@ global $current_user;
 		$_TAXONOMIES[$key]->objectsCount = count($Aposts);
 		
 		$_TAXONOMIES_POPULAR[$term->term_id] = $_TAXONOMIES[$key];
-		
-		if($_TAXONOMIES[$key]->objectsCount != 0){
-		
-			$a[] = $_TAXONOMIES[$key];
-			
-			foreach($a as $k => $itemPlace){
-				
-				foreach($_PLACES as $keys => $val){
-					
-					$args = [
-							'post_type' => 'hotels',
-							'hotels' => $itemPlace->slug,
-							'hide_empty' => true,
-					];
-					
-				}
-				
-			}
-		
-		}
 		
 	}
 	
@@ -224,7 +206,7 @@ global $current_user;
 		<?php endforeach;?>
 		
 	<?php endif;?>
-	<?php $b=1?>
+	
 <?php endif;?>
  
 <div class="popup popup-currency">

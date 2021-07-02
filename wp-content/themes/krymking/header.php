@@ -144,7 +144,8 @@ global $current_user;
         'hide_empty' => false,
     ]);
 
-    $_CATEGORIES_FULL = [];
+    global $_CATEGORIES_FULL;
+	$_CATEGORIES_FULL = [];
 
     if(!empty($_TYPES)){
 

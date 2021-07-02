@@ -21,7 +21,7 @@ $args = array(
 $query = new WP_Query;
 
 $Aposts = $query->query($args);
-//$termID = get_term_children($category->term_id, $category->slug);
+
 ?>
 <div class="headLine"></div>
 <div class="wrapper">
@@ -40,17 +40,52 @@ $Aposts = $query->query($args);
 	$term = get_queried_object();
 	
 	$children = get_terms(
-    $term->taxonomy, array(
-      'parent' => $term->term_id,
-      'hide_empty' => false
-    )
-  );?>
+	    $term->taxonomy, [
+	      'parent' => $term->term_id,
+	      'hide_empty' => false
+	    ]
+  );
+	
+	global $_TAXONOMIES;
+	
+	foreach($_TAXONOMIES as $key => $item){
+		
+		if($term->slug === $item->slug){
+			$term->objectsCount = $item->objectsCount;
+		}
+		
+		foreach($children as $k => $val){
+			
+			if($item->slug === $val->slug){
+				
+				$children[$k]->objectsCountParts = $_TAXONOMIES[$key]->objectsCountParts;
+				
+			}
+			
+		}
+		
+	}
+	//$d = $children->objectsCountParts;
+	foreach($children as $countChild){
+		foreach($countChild->objectsCountParts as $countPart){
+			if($countPart !== 0){
+				$term->objectsCount -= $countPart;
+			}
+		}
+		
+	}
+	
+	$a=1;?>
 	<div class="category-item">
-	  <a href="<?=get_term_link($term->term_id, $taxonomy)?>" class="category-name"><?=$term->name?></a>
+	  <a href="<?=get_term_link($term->term_id, $category->type)?>" class="category-name"><?=$term->name . ' (' . $term->objectsCount . ')'?></a>
 	</div>
 	<?php foreach ($children as $subcat):?>
 		<div class="category-item">
-			<a href="<?=get_term_link($subcat->term_id, $taxonomy)?>" class="category-name"><?=$subcat->name?></a>
+			<a href="<?=get_term_link($subcat->term_id, $taxonomy)?>" class="category-name"><?=$subcat->name?>
+				<?php if(array_sum($subcat->objectsCountParts) > 0):?>
+					<?= ' (' . array_sum($subcat->objectsCountParts) . ')' ?>
+				<?php endif; ?>
+			</a>
 		</div>
 	<?php endforeach; ?>
 </div>

@@ -342,6 +342,8 @@ HERE;
             $message .= 'Напоминаем, что Вы можете обмениваться сообщениями со своими гостями на сайте Krymking.ru.';
             $message .='<br>';
             $message .='<br>';
+            $message .='Зарабатывайте с удовольствием!';
+            $message .='<br>';
             $message .='С уважением, <br> Команда Krymking.ru';
             $message .= <<<HEREDOC
 </p>

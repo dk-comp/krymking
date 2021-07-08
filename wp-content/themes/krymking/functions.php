@@ -1839,32 +1839,117 @@ function dates_free($postid) { ?>
 	var disabledDays = <?=$disabledDays?>;
 		date = new Date();
 		date.setDate(date.getDate());
- 
-	$('.free-dates').datepicker({
-		monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-		monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
-		dayNamesMin: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
-		range: 'period', // режим - выбор периода
-		minDate: date,
-		dateFormat: "dd.mm.yy",
-		beforeShowDay: function(date) {
 		
-		var     m = date.getMonth(),
-				d = date.getDate(),
-				y = date.getFullYear();
-		
-		if(disabledDays) {
-			for (i = 0; i < disabledDays.length; i++) {
-				if($.inArray(y + '-' + (m+1) + '-' + d,disabledDays) != -1) {
-					return [true, 'selected-day', 'День заблокирован'];
+	let resDates = []
+	
+	$(function() {
+		$('.free-dates').datepicker({
+			monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+			monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+			dayNamesMin: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
+			minDate: date,
+			dateFormat: "dd.mm.yy",
+			range: 'multiple', // режим - выбор нескольких дат
+			range_multiple_max: '', // максимальное число выбираемых дат
+			
+			beforeShowDay : function(date){
+				let     m = date.getMonth(),
+						d = date.getDate(),
+						y = date.getFullYear();
+				
+				if(disabledDays) {
+					for (let i = 0; i < disabledDays.length; i++) {
+						if($.inArray(y + '-' + (m+1) + '-' + d,disabledDays) != -1) {
+							return [true, 'selected-day', 'День заблокирован'];
+						} else {
+							return [true, '', ''];
+						}
+					}
 				} else {
 					return [true, '', ''];
 				}
+			},
+			onSelect: function(dateText, inst, extensionRange) {
+				// extensionRange - объект расширения
+				
+				resDates = extensionRange.datesText;
+				
+				//console.log(extensionRange)
+				$('[name=multipleDate]').val(extensionRange.datesText.join('\n'));
+				
 			}
-		} else {
-			return [true, '', ''];
+		});
+		
+		// выделить послезавтра и следующие 2 дня
+		//$('.free-dates').datepicker('setDate', ['+2d', '+3d', '+4d']);
+		
+		// объект расширения (хранит состояние календаря)
+		var extensionRange = $('.free-dates').datepicker('widget').data('datepickerExtensionRange');
+		if (extensionRange.datesText) $('[name=multipleDate]').val(extensionRange.datesText.join('\n'));
+		
+	});
+	
+	document.addEventListener('DOMContentLoaded', () => {
+		
+		let submit = document.querySelector('.side-left input[type="submit"]')
+		
+		console.log(submit)
+		
+		if(submit){
+			
+			submit.addEventListener('click', () => {
+				console.log(resDates)
+				
+				$.ajax({
+					url : '/wp-admin/admin-ajax.php',
+					type: "POST",
+					dataType: "html",
+					data: {
+						'action'    : 'freeDates',
+						'post_ID'   : <?=$postid?>,
+						//'date_from' : extensionRange.startDateText,
+						//'date_to'   : extensionRange.endDateText,
+						'date_block' : resDates
+					},
+					/*beforeSend: function(xhr){
+						$('.ajax').html('');
+						$('.ajax').append('<div class="spinner"></div>');
+					},
+					success:function(result){
+						$('.ajax').html(result);
+						
+					}*/
+				});
+			})
+			
 		}
-	},
+		
+	})
+	
+	/*$('.free-dates').datepicker({
+		monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+		monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+		dayNamesMin: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
+		range: 'multiple', // режим - выбор периода
+		minDate: date,
+		dateFormat: "dd.mm.yy",
+		beforeShowDay : function(date){
+			let     m = date.getMonth(),
+					d = date.getDate(),
+					y = date.getFullYear();
+			
+			if(disabledDays) {
+				for (let i = 0; i < disabledDays.length; i++) {
+					if($.inArray(y + '-' + (m+1) + '-' + d,disabledDays) != -1) {
+						return [true, 'selected-day', 'День заблокирован'];
+					} else {
+						return [true, '', ''];
+					}
+				}
+			} else {
+				return [true, '', ''];
+			}
+		},
 		onSelect: function(dateText, inst, extensionRange) {
  
 			if (extensionRange.startDateText != extensionRange.endDateText) {
@@ -1890,65 +1975,194 @@ function dates_free($postid) { ?>
 			}
 
 		}
-	});
+	});*/
 
-	$('.free-dates').datepicker('setDate', ['<?=$date['date_from']?>', '<?=$date['date_to']?>']);
+	//$('.free-dates').datepicker('setDate', ['<?/*=$date['date_from']*/?>/*', '*/<?/*=$date['date_to']*/?>']);
 </script>
 <? }
 
 function freeDates() {
 	
+	$datesStart = $dates = $_POST['date_block'];
 	$date_from = $_POST['date_from'];
 	$date_to   = $_POST['date_to'];
-	$post_id   = $_POST['post_id'];
-
+	$post_id   = $_POST['post_ID'];
+	
+	$fields = get_field('free_dates', $post_id);
 	$field_key = "field_602f6aea7ce20";
+	
+	$field_key_from = "field_602f6aea7ce21";
+	$field_key_to = 'field_60643922b477e';
 
-	$row = array();
+	$row = [];
  
-	if (get_field('free_dates', $post_id)) {
-
-		$fields = get_field('free_dates', $post_id);
-
-		$from = array_search($_POST['date_from'], array_column($fields, 'date_from'));
-		$to = array_search($_POST['date_to'], array_column($fields, 'date_to'));
-
-		if ( is_bool($from) == false && is_bool($to) == false ) {
-
-			$result = [];
-
-			$row = get_field('free_dates', $post_id);
-
-			foreach ($row as $key => $value) {
-
-				if($value['date_from'] == $_POST['date_from'] && $value['date_to'] == $_POST['date_to']) {
-					unset($row[$key]);
-				}
-
+	if ($fields) {
+		
+		$result = [];
+		
+		if(!empty($fields)){
+			
+			foreach ($fields as $item){
+				
+				$start = new DateTime($item['date_from']);
+				
+				$end = new DateTime($item['date_to']);
+				
+				do{
+					
+					$date = $start->format('d.m.Y');
+					
+					if(($index = array_search($date, $dates)) === false){
+						
+						$dates[] = $date;
+						
+					}else{
+						
+						unset($dates[$index]);
+						
+					}
+					
+				}while($start->modify('+1 day') <= $end);
+				
+				
 			}
-
-		} else {
-
-			$row = get_field('free_dates', $post_id);
-
-			$row[] = array(
-				'date_from' => $_POST['date_from'],
-				'date_to'	=> $_POST['date_to'],
-			);
-
+			
 		}
- 
-	} else {
-
-		$row[] = array(
-			'date_from' => $_POST['date_from'],
-			'date_to'	=> $_POST['date_to'],
-		);
+		
+		usort($dates, function($a, $b){
+			
+			$date1 = new DateTime($a);
+			
+			$date2 = new DateTime($b);
+			
+			if($date1 == $date2) return 0;
+			
+			return $date1 < $date2 ? -1 : 1;
+			
+		});
+		
+		$counter = 0;
+		
+		foreach ($dates as $key => $item){
+			
+			if(!isset($result[$counter])) $result[$counter]['date_from'] = $item;
+			
+			if(isset($dates[$key + 1])){
+				
+				if((new DateTime($item))->modify('+1 day') != (new DateTime($dates[$key + 1]))){
+					
+					$result[$counter]['date_to'] = $item;
+					
+					$counter++;
+					
+				}
+				
+			}else{
+				
+				$result[$counter]['date_to'] = $item;
+				
+			}
+			
+		}
 
 	}
-
+	
+	$a=$datesStart;
+	
+	
 	// сохраняем значение для повторителя
-	update_field( $field_key, $row, $post_id );
+	
+	if($result){
+		
+		global $wpdb;
+		
+		$fieldsFrom = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $post_id AND meta_value = '$field_key_from'");
+		
+		$fieldsTo = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $post_id AND meta_value = '$field_key_to'");
+		
+		if($fieldsFrom){
+			
+			foreach($fieldsFrom as $name => $item){
+				
+				if(strpos($item->meta_key, '_free_dates') === 0){
+					
+					$metaKey = preg_replace('/^_/', '', $item->meta_key);
+					
+					$RES = $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND meta_id = {$item->meta_id}");
+					$RES = $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND meta_key = '$metaKey'");
+					
+				}
+				
+			}
+			
+		}
+		
+		if($fieldsTo){
+			
+			foreach($fieldsTo as $name => $item){
+				
+				if(strpos($item->meta_key, '_free_dates') === 0){
+					
+					$metaKey = preg_replace('/^_/', '', $item->meta_key);
+					
+					$RES = $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND meta_id = {$item->meta_id}");
+					
+					$RES = $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND meta_key = '$metaKey'");
+					
+				}
+				
+			}
+			
+		}
+		
+		if($fieldsFrom || $fieldsTo){
+			
+			$wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND meta_key = 'free_dates'");
+			
+		}
+		
+		$type = '_free_dates_0_date_from';
+		
+		foreach($result as $key => $item){
+			
+			$rowFrom = "free_dates_{$key}_date_from";
+			
+			$rowTo = "free_dates_{$key}_date_to";
+			
+			$dateFrom = (new DateTime($item['date_from']))->format('Ymd');
+			$dateTo = (new DateTime($item['date_to']))->format('Ymd');
+			
+			$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '_{$rowFrom}', '$field_key_from')");
+			
+			$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '_{$rowTo}', '$field_key_from')");
+			
+			$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '{$rowFrom}', '{$dateFrom}')");
+			
+			$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '{$rowTo}', '{$dateTo}')");
+			
+		}
+		
+		$countDates = count($result);
+		
+		$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, 'free_dates', '$countDates')");
+		
+		$a = 1;
+		
+//		foreach($fields as $fkey => $fitem){
+//
+//			delete_field($field_key, $post_id);
+//			//delete_post_meta($post_id, );
+//
+//		}
+//
+//		foreach($result as $key_res => $item_res){
+//
+//			update_field($field_key, $item_res, $post_id );
+//
+//		}
+		
+	}
+	
 
 	echo dates_free($post_id);
 	
@@ -1956,6 +2170,18 @@ function freeDates() {
 }
 add_action('wp_ajax_nopriv_freeDates','freeDates');
 add_action('wp_ajax_freeDates','freeDates');
+
+function compareByTimeStamp($time1, $time2){
+	
+	if(strtotime($time1) < strtotime($time2)){
+		return 1;
+	}elseif(strtotime($time1) > strtotime($time2)){
+		return -1;
+	}else{
+		return 0;
+	}
+	
+}
 
 function monthDisabled() {
 
@@ -1987,8 +2213,7 @@ function SecondLastPostId() {
     global $wpdb;
 
 	$result  = $wpdb->get_results( "SHOW TABLE STATUS LIKE 'wp_posts'", ARRAY_A );
- 
-
+	
     return $result[0]['Auto_increment'];
 }
 

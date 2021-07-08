@@ -26,12 +26,12 @@
 
         <div class="flexbox">
 	        
-	            <div class="form-field form-in">
-	                <input type="text" name="check_in" value="<?=$_SESSION['check_in'];?>" placeholder="Заезд" autocomplete="off" required class="datepicker text-field">
-	            </div>
-	            <div class="form-field form-out">
-	                <input type="text" name="check_out" value="<?=$_SESSION['check_out'];?>" placeholder="Выезд" autocomplete="off" required class="datepicker text-field">
-	            </div>
+            <div class="form-field form-in">
+                <input type="text" name="check_in" value="<?=$_SESSION['check_in'];?>" placeholder="Заезд" autocomplete="off" required class="datepicker text-field">
+            </div>
+            <div class="form-field form-out">
+                <input type="text" name="check_out" value="<?=$_SESSION['check_out'];?>" placeholder="Выезд" autocomplete="off" required class="datepicker text-field">
+            </div>
 	        
         </div>
         <div class="form-field">

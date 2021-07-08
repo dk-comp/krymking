@@ -482,7 +482,6 @@ jQuery(document).ready(function ($) {
 			}
 		});
 
-
  	}
 
 	$('input[name="check_in"], input[name="check_out"], input[name="counts_guests"]').on("change", function(){

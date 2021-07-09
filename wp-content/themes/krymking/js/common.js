@@ -840,8 +840,10 @@ jQuery(document).ready(function ($) {
 				
 				if (result.status) {
 					if (result.status == 'success') {
+						$('#link').removeClass('hidden');
 						MessagePopup(result.message);
 						$('.btn-add').fadeOut();
+
 					}
 				}
 			}

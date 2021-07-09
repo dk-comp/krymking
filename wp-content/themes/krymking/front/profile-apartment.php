@@ -274,7 +274,7 @@ if ($postid) {
 		<div class="create-text">Чтобы не получать заявки о бронировании на занятые даты, перечеркните в календаре дни, когда заселение невозможно</div>
 		<div class="calendar-flex">
 			<div class="calendar-left">
-				<div class="calendar-header">Для блокировки периода выберите первую и последнюю дату периода</div>
+				<div class="calendar-header"></div>
 
 				<div class="ajax ajax-date"><?=dates_free($postid);?></div>
 				<textarea name="multipleDate"></textarea>
@@ -387,8 +387,8 @@ if ($postid) {
 	</div>
 </div>
 
-<a href="/add-object/" class="btn new-add hidden">Добавить еще объект</a>
-
+<a id="link" href="http://rsya-lightsshop.my/profile/add/" class="btn new-add hidden">Добавить еще объект</a>
+<?php $a=1?>
 <div class="navigation">
 	<div class="btn btn-prev">Назад</div>
 	<div class="btn btn-next">Далее</div>

@@ -203,7 +203,7 @@ if (empty($_POST['choosed'])) {
 		<div class="create-text">Чтобы не получать заявки о бронировании на занятые даты, перечеркните в календаре дни, когда заселение невозможно</div>
 		<div class="calendar-flex">
 			<div class="calendar-left">
-				<div class="calendar-header">Для блокировки периода выберите первую и последнюю дату периода</div>
+				<div class="calendar-header"><!--Для блокировки периода выберите первую и последнюю дату периода--></div>
 
 				<div class="ajax ajax-date"><?=dates_free($postid);?></div>
 			</div>
@@ -300,7 +300,7 @@ if (empty($_POST['choosed'])) {
 	</div>
 </div>
 
-<a href="/add-object/" class="btn new-add hidden">Добавить еще объект</a>
+<a href="/add-object/" class="btn new-add">Добавить еще объект</a>
 
 <div class="navigation">
 	<div class="btn btn-prev">Назад</div>

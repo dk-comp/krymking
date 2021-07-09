@@ -2146,21 +2146,6 @@ function freeDates() {
 		
 		$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, 'free_dates', '$countDates')");
 		
-		$a = 1;
-		
-//		foreach($fields as $fkey => $fitem){
-//
-//			delete_field($field_key, $post_id);
-//			//delete_post_meta($post_id, );
-//
-//		}
-//
-//		foreach($result as $key_res => $item_res){
-//
-//			update_field($field_key, $item_res, $post_id );
-//
-//		}
-		
 	}
 	
 

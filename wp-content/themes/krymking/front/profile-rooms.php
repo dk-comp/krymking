@@ -300,7 +300,7 @@ if (empty($_POST['choosed'])) {
 	</div>
 </div>
 
-<a href="/add-object/" class="btn new-add">Добавить еще объект</a>
+<a id="link" href="/profile/add/" class="btn new-add hidden">Добавить еще объект</a>
 
 <div class="navigation">
 	<div class="btn btn-prev">Назад</div>

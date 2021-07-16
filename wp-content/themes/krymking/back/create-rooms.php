@@ -8,8 +8,8 @@ function create_object(){
 			$btn = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один объект</a>';
             $btn2 = '<a href="<?=home_url(\'/objects/edit/\');?>?post=<?=get_the_ID();?>&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
 
-			$result['status'] = 'success';
-            $result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. '.$btn.'<br>'.$btn2;
+			//$result['status'] = 'success';
+            //$result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. '.$btn.'<br>'.$btn2;
 		} else {
 			$status = 'draft';
 
@@ -96,7 +96,21 @@ function create_object(){
 		
         $result['status'] = 'success';
         $result['message'] = 'Изменения успешно сохранены!';
-		
+        
+        $showBtns = function () {
+            $btn = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один объект</a>';
+            $btn2 = '<a href="<?=home_url(\'/objects/edit/\');?>?post=<?=get_the_ID();?>&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
+            if($_POST['select_object'] === "85"){
+                return $btn.'<br>'.$btn2;
+            }else {
+                return $btn;
+            }
+        };
+
+        $result['status'] = 'success';
+        $result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. ' . $showBtns;
+
+
 		if ( !empty($_FILES['files']) ) {
 			if ( ! function_exists( 'wp_handle_upload' ) ) {
 			    require_once( ABSPATH . 'wp-admin/includes/file.php' );

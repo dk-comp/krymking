@@ -250,20 +250,23 @@ if (empty($_POST['choosed'])) {
 
 			<fieldset class="form-group">
 			    <div class="fieldset-title">Нажмите для добавления фото</div>
-			    <input type="file" id="pro-image" name="files[]" style="display: none;" class="form-control" multiple>
+			    <input type="file" id="sub-image" name="files[]" style="display: none;" class="form-control" multiple>
 			</fieldset>
 			<div class="preview-images-zone">
-				<?foreach (get_field('gallery', $postid) as $image) { ?>
-				<div class="preview-image preview-show-4">
-					<div class="image-cancel" data-no="4">x</div>
-					<div class="image-zone">
-						<img id="pro-img-4" src="<?=$image['url'];?>">
-					</div>
-					<div class="tools-edit-image">
-						<a href="javascript:void(0)" data-no="4" class="btn-edit-image">Редактировать</a>
-					</div>
-				</div>
-				<? } ?>
+				<?php if(get_field('gallery', $postid)):?>
+					<?foreach (get_field('gallery', $postid) as $image) { ?>
+						<div class="preview-image preview-show-<?=$image['id']?>">
+							<div class="image-cancel" data-no="<?=$image['id']?>" data-post_id="<?=$postid?>">x</div>
+							<div class="image-zone">
+								<img id="<?=$image['id']?>" src="<?=$image['url'];?>">
+								<input name="gallery[]" value="<?=$image['id'];?>" type="hidden">
+							</div>
+							<div class="tools-edit-image">
+								<a href="javascript:void(0)" data-no="<?=$image['id']?>" class="btn-edit-image">Редактировать</a>
+							</div>
+						</div>
+					<? } ?>
+				<?php endif;?>
 			</div>
  
 		<div class="create-note"><span>Не более 25 фотографий.</span> Размер файла <span>– не более 10 МБ</span>. Требования к фотографиям: <span>не должно быть адресов, телефонов, логотипов, других отметок.</span> Форматы фото: <span>jpg., gif., png.</span></div>
@@ -293,16 +296,41 @@ if (empty($_POST['choosed'])) {
 <script>
 $(document).ready(function() {
     $('.fieldset-title').click(function() {
-    	$('#pro-image').click();
+    	$('#sub-image').click();
     });
-    	document.getElementById('pro-image').addEventListener('change', readImage, false);
+    	document.getElementById('sub-image').addEventListener('change', readImage, false);
     
     	$( ".preview-images-zone" ).sortable();
-    
+	
 		$(document).on('click', '.image-cancel', function() {
-		    let no = $(this).data('no');
-		    $(".preview-image.preview-show-"+no).remove();
+			let data = new FormData;
+			
+			let no = $(this).data('no')
+			data.append('image_id', no);
+			data.append('post_id', $(this).data('post_id'));
+			data.append('action', 'delete_image');
+			
+			$.ajax({
+				url : '/wp-admin/admin-ajax.php',
+				method: "post",
+				processData: false,
+				contentType: false,
+				dataType: "json",
+				data: data,
+				success:function(result){
+					//console.log(result)
+					if (result.status) {
+						//console.log(no)
+						$(".preview-image.preview-show-"+no).remove();
+					}
+				}
+			});
 		});
+		
+		
+		/*$(".image-cancel").on('click', function() {
+		    $(this).closest(".preview-image").remove();
+		});*/
  
 		var num = 4;
 		function readImage() {

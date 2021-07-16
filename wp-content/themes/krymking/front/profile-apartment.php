@@ -388,7 +388,7 @@ if ($postid) {
 </div>
 
 <a id="link" href="/profile/add/" class="btn new-add hidden">Добавить еще объект</a>
-<?php $a=1?>
+
 <div class="navigation">
 	<div class="btn btn-prev">Назад</div>
 	<div class="btn btn-next">Далее</div>

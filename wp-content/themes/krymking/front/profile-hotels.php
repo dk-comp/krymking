@@ -275,11 +275,10 @@ function init() {
 		    <div class="fieldset-title">Нажмите для добавления фото</div>
 		    <input type="file" id="pro-image" name="files[]" style="display: none;" class="form-control" multiple>
 		</fieldset>
-        <?php $imagesArr = [];?>
-        <?php $imagesArr = get_field_object('field_5fe06e7c53d4b', $postid)['value'];?>
-        <?php if ($imagesArr !== false && isset($imagesArr)):?>
+        
+        <?php /*if (get_field_object('field_5fe06e7c53d4b', $postid)['value']):*/?>
             <div class="preview-images-zone">
-                <?foreach ($imagesArr as $image) { ?>
+                <?foreach (get_field_object('field_5fe06e7c53d4b', $postid)['value'] as $image) { ?>
                     <div class="preview-image preview-show-<?=$image['ID'];?>">
                         <div class="image-cancel" data-no="<?=$image['ID'];?>">x</div>
                         <div class="image-zone">
@@ -293,7 +292,7 @@ function init() {
                 <? } ?>
             </div>
             <div class="create-note"><span>Не более 25 фотографий.</span> Размер файла <span>– не более 10 МБ</span>. Требования к фотографиям: <span>не должно быть адресов, телефонов, логотипов, других отметок.</span> Форматы фото: <span>jpg., gif., png.</span></div>
-        <?php endif;?>
+        <?php /*endif;*/?>
 	</div>
 	<div class="navigation">
 		<div class="btn btn-prev">Назад</div>
@@ -393,8 +392,8 @@ $field3 = get_field_object('field_604afd438ab87');
 			<?foreach ($field1['choices'] as $field_key => $field_value) { ?>
 
 				<label class="custom-radio form-control">
-					<input type="radio" name="<?=$field1['name'];?>" value="<?=$field_key;?>">
-					<div class="label-name"><?=$field_value;?></div>
+					<input type="radio" name="<?=$field1['name']?>" value="<?=$field_key?>">
+					<div class="label-name"><?=$field_value?></div>
 				</label>
 
 			<? } ?>

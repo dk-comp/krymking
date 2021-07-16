@@ -91,10 +91,12 @@ function create_object(){
 		$result['message'] = $post_id->get_error_message();
 
 	} else {
-
+		
+		global $wpdb;
+		
         $result['status'] = 'success';
         $result['message'] = 'Изменения успешно сохранены!';
-
+		
 		if ( !empty($_FILES['files']) ) {
 			if ( ! function_exists( 'wp_handle_upload' ) ) {
 			    require_once( ABSPATH . 'wp-admin/includes/file.php' );
@@ -121,7 +123,7 @@ function create_object(){
 						$filetype = wp_check_filetype( basename( $filename ), null );
 						$wp_upload_dir = wp_upload_dir();
 						$attachment = array(
-							'guid'           => $wp_upload_dir['url'] . '/' . basename( $filename ), 
+							'guid'           => $wp_upload_dir['url'] . '/' . basename( $filename ),
 							'post_mime_type' => $filetype['type'],
 							'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $filename ) ),
 							'post_content'   => '',
@@ -129,21 +131,61 @@ function create_object(){
 						);
 
 						// Получаем id медиафайла
-						$attach_id = wp_insert_attachment( $attachment, $filename, 0 );
-						require_once( ABSPATH . 'wp-admin/includes/image.php' );
-
-						// Создадим метаданные для вложения и обновим запись в базе данных.
-						$attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
-						wp_update_attachment_metadata( $attach_id, $attach_data);
-
+						$attach_id = wp_insert_attachment( $attachment, $filename, $post_id );
+					    require_once( ABSPATH . 'wp-admin/includes/image.php' );
+					    
+					    if($_SESSION['postId'] === $post_id){
+						    // Создадим метаданные для вложения и обновим запись в базе данных.
+						    $attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
+						    wp_update_attachment_metadata( $attach_id, $attach_data);
+					    }
+					    
 						$photos[] = $attach_id;
 		    		}
 			    }
 			}
-
-		 	set_post_thumbnail( $post_id, $photos[0]);
- 			update_field('gallery', $photos, $post_id);
+			if(!empty(get_post_thumbnail_id($post_id))){
+				set_post_thumbnail($post_id, $photos[0]);
+			}
+			if($_SESSION['postId'] === $post_id){
+				
+				unset($_SESSION['postId']);
+				
+				
+				/*$serializePhoto = serialize($photos);
+				$res = $wpdb->query("UPDATE wp_postmeta SET meta_value = '$serializePhoto' WHERE post_id = $post_id AND meta_key = 'gallery'");*/
+				update_field('gallery', $photos, $post_id);
+				
+			}
+			
+			if($post_id){
+				
+				$fieldUpdate = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $post_id AND meta_key = 'gallery'");
+				
+				if($fieldUpdate){
+					
+					foreach($fieldUpdate as $key => $item){
+						
+						$del_img = unserialize($item->meta_value) ?: [];
+						
+						/*if(($key = array_search($image_id, $del_img)) !== false){
+							unset($del_img[$key]);
+							foreach($del_img as $k => $v){
+								if($v == $image_id) unset($del_img[$k]);
+							}
+						}*/
+						
+						$del_img = array_merge($del_img, $photos);
+					}
+					//$res = $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND meta_key = 'gallery'");
+					$serializePhoto = serialize($del_img);
+					$res = $wpdb->query("UPDATE wp_postmeta SET meta_value = '$serializePhoto' WHERE post_id = $post_id AND meta_key = 'gallery'");
+				}
+			}
+			
 		}
+		
+		
  
 		if(wp_get_term_taxonomy_parent_id( $_POST['city'], 'hotel' ) == 0) {
 			$term_hotel = $_POST['city'];
@@ -162,7 +204,9 @@ function create_object(){
 		$delete_keys = array('action', 'term_id', 'region', 'city', 'apartment_name', 'description', 'object_name', 'post_ID', 'files');
 		$arr = array_diff_key($arr, array_flip($delete_keys));
 		foreach ($arr as $key => $val) {
-			update_field($key, $_POST[$key], $post_id);	 
+			if($key !== 'gallery'){
+				update_field($key, $_POST[$key], $post_id);
+			}
 		}
 
 	}

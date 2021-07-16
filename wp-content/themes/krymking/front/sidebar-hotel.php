@@ -4,3 +4,5 @@
 	<li data-step="photo"><a href="#photo">3. <span>Фото: отель и территория</span></a></li>
 	<li data-step="rooms"><a href="#rooms" class="open-room">4. <span>Номера</span></a></li>
 </ul>
+<div class="error hidden">Заполните обязательные поля</div>
+<input type="submit" name="publish" value="Опубликовать" class="btn btn-add">

@@ -1898,7 +1898,6 @@ function dates_free($postid) { ?>
 		if(submit){
 			
 			submit.addEventListener('click', () => {
-				console.log(resDates)
 				
 				$.ajax({
 					url : '/wp-admin/admin-ajax.php',
@@ -2153,8 +2152,58 @@ function freeDates() {
 	
 	exit;
 }
+
 add_action('wp_ajax_nopriv_freeDates','freeDates');
 add_action('wp_ajax_freeDates','freeDates');
+
+function wp_ajax_delete_image(){
+	
+	global $wpdb;
+	
+	$resultFlag = false;
+	
+	if(!empty($_POST['post_id']) && !empty($_POST['image_id'])){
+		
+		$post_id = (int)$_POST['post_id'];
+		
+		$image_id = $_POST['image_id'];
+		
+		if($post_id && $image_id){
+			
+			$fieldUpdate = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $post_id AND meta_key = 'gallery'");
+			
+			if($fieldUpdate){
+				
+				foreach($fieldUpdate as $key => $item){
+					
+					$del_img = unserialize($item->meta_value) ?: [];
+					
+					if(($key = array_search($image_id, $del_img)) !== false){
+						
+						unset($del_img[$key]);
+						
+						$del_img = array_values($del_img);
+						
+						$serializePhoto = serialize($del_img);
+						
+						$res = $wpdb->query("UPDATE wp_postmeta SET meta_value = '$serializePhoto' WHERE post_id = $post_id AND meta_key = 'gallery'");
+						
+						if($res) $resultFlag = true;
+						
+					}
+				}
+				
+			}
+			
+		}
+		
+		
+	}
+	
+	exit(json_encode(['status' => +$resultFlag]));
+	
+}
+
 
 function compareByTimeStamp($time1, $time2){
 	

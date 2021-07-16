@@ -16,7 +16,9 @@ if ( isset( $_GET['post'] ) && isset( $_POST['post_ID'] ) && (int) $_GET['post']
 
     $post = get_default_post_to_edit( 'hotels', true );
     $post_id = $post->ID;
-
+    
+	$_SESSION['postId'] = $post_id;
+	
     $my_post = array();
     $my_post['ID'] = $post_id;
     $my_post['post_title'] = 'Без названия';
@@ -72,7 +74,7 @@ if ( $term->term_id == 83 || $term->term_id == 90 || $term->term_id == 89 || $te
 } elseif ( $term->term_id == 85 || $term->term_id == 86 || $term->term_id == 87 ) {
 
     if ( get_field('_wp_page_template', $post->ID) != 'single-room.php' ) {
-        $action = 'https://krymking.ru/profile/add/hotels/room/';
+        $action = 'http://rsya-lightsshop.my/profile/add/hotels/room/';
         $class = 'object-hotel';
     } else {
         $action = 'create_object';

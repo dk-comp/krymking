@@ -750,7 +750,7 @@ jQuery(document).ready(function ($) {
 			success:function(result){
 
 				if (result.status) {
-					$(cl+" .message").html(result.message);				
+					$(cl+" .message").html(result.message);
 					
 					if (result.status == 'success'){
 						$(cl+" .message").removeClass("error");
@@ -787,13 +787,13 @@ jQuery(document).ready(function ($) {
 		$.each(form_data, function (key, input) {
 		    data.append(input.name, input.value);
 		});
-		
 		//File data
 		var file_data = $('#pro-image')[0].files;
-		for (var i = 0; i < file_data.length; i++) {
+		//console.log(file_data)
+		for (var i = 0; i <= file_data.length; i++) {
 		    data.append("files[]", file_data[i]);
 		}
- 
+
 		$.ajax({
 			url : '/wp-admin/admin-ajax.php',
 			method: "post",
@@ -804,7 +804,7 @@ jQuery(document).ready(function ($) {
 			success:function(result){
 
 				$('.message.update-fields').html(result.message);
-				
+
 			}
 		});
 
@@ -824,8 +824,9 @@ jQuery(document).ready(function ($) {
 		data.append('publish', '1');	
 		
 		//File data
-		var file_data = $('#pro-image')[0].files;
-		for (var i = 0; i < file_data.length; i++) {
+		var file_data = $('#sub-image')[0].files;
+		console.log(file_data)
+		for (var i = 0; i <= file_data.length; i++) {
 		    data.append("files[]", file_data[i]);
 		}
 
@@ -843,7 +844,6 @@ jQuery(document).ready(function ($) {
 						$('#link').removeClass('hidden');
 						MessagePopup(result.message);
 						$('.btn-add').fadeOut();
-
 					}
 				}
 			}
@@ -1532,6 +1532,7 @@ jQuery(document).ready(function ($) {
 			});
 
 		});
+
 	}
 
 	checkInput();
@@ -1569,7 +1570,7 @@ jQuery(document).ready(function ($) {
 				'post_id' : $(this).attr('data-id')
 			},
 			success:function(result){
-	
+				console.log(result)
 			}
 	   });
 	});

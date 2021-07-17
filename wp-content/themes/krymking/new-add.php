@@ -74,7 +74,7 @@ if ( $term->term_id == 83 || $term->term_id == 90 || $term->term_id == 89 || $te
 } elseif ( $term->term_id == 85 || $term->term_id == 86 || $term->term_id == 87 ) {
 
     if ( get_field('_wp_page_template', $post->ID) != 'single-room.php' ) {
-        $action = 'http://rsya-lightsshop.my/profile/add/hotels/room/';
+        $action = 'https://krymking.ru/profile/add/hotels/room/';
         $class = 'object-hotel';
     } else {
         $action = 'create_object';

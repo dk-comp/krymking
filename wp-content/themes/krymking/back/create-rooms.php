@@ -151,7 +151,6 @@ function create_object(){
 				
 				unset($_SESSION['postId']);
 				
-				
 				/*$serializePhoto = serialize($photos);
 				$res = $wpdb->query("UPDATE wp_postmeta SET meta_value = '$serializePhoto' WHERE post_id = $post_id AND meta_key = 'gallery'");*/
 				update_field('gallery', $photos, $post_id);

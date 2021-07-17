@@ -74,7 +74,13 @@ if ( $term->term_id == 83 || $term->term_id == 90 || $term->term_id == 89 || $te
 } elseif ( $term->term_id == 85 || $term->term_id == 86 || $term->term_id == 87 ) {
 
     if ( get_field('_wp_page_template', $post->ID) != 'single-room.php' ) {
+
         $action = 'https://krymking.ru/profile/add/hotels/room/';
+
+        /*$action = 'https://krymking.ru/profile/add/hotels/room/';
+
+        $action = '/profile/add/hotels/room/';*/
+	    
         $class = 'object-hotel';
     } else {
         $action = 'create_object';
@@ -92,14 +98,14 @@ if ( $term->term_id == 83 || $term->term_id == 90 || $term->term_id == 89 || $te
 <div class="wrapper">
     <div class="breadcrumbs" itemscope="" itemtype="http://schema.org/BreadcrumbList">
     <span itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
-    <a class="breadcrumbs__link" href="https://krymking.ru/" itemprop="item">
+    <a class="breadcrumbs__link" href="/" itemprop="item">
         <span itemprop="name">Главная</span>
     </a><meta itemprop="position" content="1"></span>
     <span class="breadcrumbs__separator"></span>
     <span itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
-    <a class="breadcrumbs__link" href="https://krymking.ru/profile/" itemprop="item">
+    <a class="breadcrumbs__link" href="/profile/" itemprop="item">
         <span itemprop="name">Личный кабинет</span>
-    </a><meta itemprop="position" content="2"></span><span class="breadcrumbs__separator"></span><span itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem"><a class="breadcrumbs__link" href="https://krymking.ru/profile/add/" itemprop="item"><span itemprop="name">Сдать жильё</span></a><meta itemprop="position" content="3"></span><span class="breadcrumbs__separator"></span><span class="breadcrumbs__current">Размещение объекта</span></div>
+    </a><meta itemprop="position" content="2"></span><span class="breadcrumbs__separator"></span><span itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem"><a class="breadcrumbs__link" href="/profile/add/" itemprop="item"><span itemprop="name">Сдать жильё</span></a><meta itemprop="position" content="3"></span><span class="breadcrumbs__separator"></span><span class="breadcrumbs__current">Размещение объекта</span></div>
 	<?//if (function_exists('dimox_breadcrumbs')) dimox_breadcrumbs();?>  
 
  	<form class="profile page-wrap create-room <?=$class;?>" method="post" action="<?=$action;?>">

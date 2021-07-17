@@ -2909,6 +2909,7 @@ function booking_confirmed() {
 	$headers = 'Content-type: text/html; charset=utf-8'."\r\n".'From: Krymking <info@krymking.ru>';
 
 		// Если объект подключен к мгновенному бронированию
+    $murad = get_field('fast_booking', $post);
 	if(get_field('fast_booking', $post) == 'Включить') {
 		$subject = 'Благодарим за бронирование №'.$post_id.'';
 
@@ -2930,7 +2931,8 @@ function booking_confirmed() {
 		$message .= '<a href="'.home_url("/booking/").'?booking-id='.$post_id.'">Внести предоплату</a>';
 		$message .='<br>';
 		$message .='<br>';
-		$message .='С уважением, <br> Команда Krymking.ru';	
+		$message .='С уважением, <br> Команда Krymking.ru';
+
 	}
 
 	wp_mail($user->user_email, $subject, $message, $headers);

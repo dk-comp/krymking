@@ -804,7 +804,7 @@ jQuery(document).ready(function ($) {
 			success:function(result){
 
 				$('.message.update-fields').html(result.message);
-
+				location.search()
 			}
 		});
 
@@ -814,6 +814,7 @@ jQuery(document).ready(function ($) {
 	});
 
 	$('.page-template-new-add .create-room.object-update, .page-template-room .create-room').on("submit", function(){
+		//e.preventDefault()
 		var data = new FormData();
 		
 		//Form data
@@ -842,8 +843,10 @@ jQuery(document).ready(function ($) {
 				if (result.status) {
 					if (result.status == 'success') {
 						$('#link').removeClass('hidden');
+						//alert('Изменения успешно сохранены')
 						MessagePopup(result.message);
 						$('.btn-add').fadeOut();
+
 					}
 				}
 			}

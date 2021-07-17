@@ -5,7 +5,7 @@
 	<div class="wrapper">
 		<?if (function_exists('dimox_breadcrumbs')) dimox_breadcrumbs();?>
 
-	 	<form class="profile page-wrap create-room" method="post" action="https://krymking.ru/profile/add/hotels/room/">
+	 	<form class="profile page-wrap create-room" method="post" action=<?=home_url()?>"/profile/add/hotels/room/">
 	 		<input type="hidden" name="action" value="create_object">
 	 		<input type="hidden" name="object_type" value="<?=$object_type;?>">
 	 		<input type="hidden" name="post_ID" value="<?=$postid;?>">

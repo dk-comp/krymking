@@ -33,7 +33,7 @@ get_header();
 	<div class="breadcrumbs" itemscope="" itemtype="http://schema.org/BreadcrumbList"><span itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem"><a class="breadcrumbs__link" href="https://krymking.ru/" itemprop="item"><span itemprop="name">Главная</span></a><meta itemprop="position" content="1"></span><span class="breadcrumbs__separator"></span><span itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem"><a class="breadcrumbs__link" href="https://krymking.ru/profile/" itemprop="item"><span itemprop="name">Личный кабинет</span></a><meta itemprop="position" content="2"></span><span class="breadcrumbs__separator"></span><span itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem"><a class="breadcrumbs__link" href="https://krymking.ru/profile/add/" itemprop="item"><span itemprop="name">Сдать жильё</span></a><meta itemprop="position" content="3"></span><span class="breadcrumbs__separator"></span><span class="breadcrumbs__current">Размещение объекта</span></div>
 	<?//if (function_exists('dimox_breadcrumbs')) dimox_breadcrumbs();?>
 
- 	<form class="profile page-wrap create-room" method="post" action="https://krymking.ru/profile/add/hotels/room/">
+ 	<form class="profile page-wrap create-room" method="post" action=<?= home_url()?>"/profile/add/hotels/room/">
  		<input type="hidden" name="action" value="create_object">
  		<input type="hidden" name="object_type" value="<?=$object_type;?>">
  		<input type="hidden" name="post_id" value="<?=$postid;?>">

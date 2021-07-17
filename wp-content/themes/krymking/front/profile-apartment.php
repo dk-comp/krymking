@@ -341,7 +341,7 @@ if ($postid) {
  
 			<fieldset class="form-group">
 			    <div class="fieldset-title">Нажмите для добавления фото</div>
-			    <input type="file" id="pro-image" name="files[]" style="display: none;" class="form-control" multiple>
+			    <input type="file" id="sub-image" name="files[]" style="display: none;" class="form-control" multiple>
 			</fieldset>
 			<div class="preview-images-zone">
 				<?foreach (get_field_object('field_5fe06e7c53d4b', $postid)['value'] as $image) { ?>
@@ -398,9 +398,9 @@ if ($postid) {
 <script>
 $(document).ready(function() {
     $('.fieldset-title').click(function() {
-    	$('#pro-image').click();
+    	$('#sub-image').click();
     });
-    	document.getElementById('pro-image').addEventListener('change', readImage, false);
+    	document.getElementById('sub-image').addEventListener('change', readImage, false);
     
     	$( ".preview-images-zone" ).sortable();
     
@@ -435,7 +435,7 @@ $(document).ready(function() {
 		
 		            picReader.readAsDataURL(file);
 		        }
-		        // $("#pro-image").val('');
+		        // $("#sub-image").val('');
 		    } else {
 		        console.log('Browser not support');
 		    }

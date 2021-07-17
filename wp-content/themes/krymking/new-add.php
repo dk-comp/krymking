@@ -75,7 +75,7 @@ if ( $term->term_id == 83 || $term->term_id == 90 || $term->term_id == 89 || $te
 
     if ( get_field('_wp_page_template', $post->ID) != 'single-room.php' ) {
 
-        $action = 'https://krymking.ru/profile/add/hotels/room/';
+        $action = home_url() . '/profile/add/hotels/room/';
 
         /*$action = 'https://krymking.ru/profile/add/hotels/room/';
 

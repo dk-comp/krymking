@@ -5773,7 +5773,11 @@ select.ui-datepicker-month, select.ui-datepicker-year {
 .fancybox-slide .message-content .btn {
   padding: 15px 22.1px;
   display: table;
-  margin: 15px auto;
+  margin: 30px auto;
+}
+
+.fancybox-slide .message-content .btn + .btn {
+  margin-top: 0;
 }
 
 .disable-month {

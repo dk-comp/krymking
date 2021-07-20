@@ -292,7 +292,7 @@ if (empty($_POST['choosed'])) {
 	<div class="btn btn-next">Далее</div>
 </div>
 
- 
+
 <script>
 $(document).ready(function() {
     $('.fieldset-title').click(function() {

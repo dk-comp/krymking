@@ -280,7 +280,7 @@ function init() {
             <div class="preview-images-zone">
                 <?foreach (get_field_object('field_5fe06e7c53d4b', $postid)['value'] as $image) { ?>
                     <div class="preview-image preview-show-<?=$image['ID'];?>">
-                        <div class="image-cancel" data-no="<?=$image['ID'];?>">x</div>
+                        <div class="image-cancel" data-no="<?=$image['ID'];?>" data-post_id="<?=$postid?>">x</div>
                         <div class="image-zone">
                             <img id="pro-img-<?=$image['ID'];?>" src="<?=$image['url'];?>">
                             <input name="gallery[]" value="<?=$image['ID'];?>" type="hidden">
@@ -453,11 +453,36 @@ $(document).ready(function() {
 	document.getElementById('pro-image').addEventListener('change', readImage, false);
 
 	$( ".preview-images-zone" ).sortable();
-
+	
 	$(document).on('click', '.image-cancel', function() {
+		let data = new FormData;
+		
+		let no = $(this).data('no')
+		data.append('image_id', no);
+		data.append('post_id', $(this).data('post_id'));
+		data.append('action', 'delete_image');
+		
+		$.ajax({
+			url : '/wp-admin/admin-ajax.php',
+			method: "post",
+			processData: false,
+			contentType: false,
+			dataType: "json",
+			data: data,
+			success:function(result){
+				//console.log(result)
+				if (result.status) {
+					//console.log(no)
+					$(".preview-image.preview-show-"+no).remove();
+				}
+			}
+		});
+	});
+
+	/*$(document).on('click', '.image-cancel', function() {
 		let no = $(this).data('no');
 		$(".preview-image.preview-show-"+no).remove();
-	});
+	});*/
 
 	var num = 4;
 	function readImage() {

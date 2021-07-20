@@ -779,39 +779,59 @@ jQuery(document).ready(function ($) {
     //$('select[name="currency"]').attr('disabled', 'disabled');
 
 	// Create room
-	$(document).on('change', '.create-room *', function() {
-		var data = new FormData();
-		
-		//Form data
-		var form_data = $('.create-room').serializeArray();
-		$.each(form_data, function (key, input) {
-		    data.append(input.name, input.value);
-		});
-		//File data
-		var file_data = $('#pro-image')[0].files;
-		//console.log(file_data)
-		for (var i = 0; i <= file_data.length; i++) {
-		    data.append("files[]", file_data[i]);
-		}
 
-		$.ajax({
-			url : '/wp-admin/admin-ajax.php',
-			method: "post",
-			processData: false,
-			contentType: false,
-			dataType: "json",
-			data: data,
-			success:function(result){
+	/*let typeObject = $("input[name='object_type']").val();
+	console.log(typeObject)
+	if (typeObject == 85 || typeObject == 86 || typeObject == 87) {*/
 
-				$('.message.update-fields').html(result.message);
-				location.search()
+		$(document).on('change', '.create-room *', function () {
+			let data = new FormData();
+
+			var ids = $('.form-control').map(function(i,el){
+				return $(el).attr('id');
+			}).get();
+			console.log(ids)
+			/*let idRowFirst = $('form-control').hasAttribute('#sub-image')[0].files != 'undefined' ? $('#sub-image')[0].files : '';
+			console.log(idRowFirst)
+			let idRowLast = $('form-control').hasAttribute('#pro-image')[0].files != 'undefined' ? $('#pro-image')[0].files : '';*/
+			//Form data
+			let form_data = $('.create-room').serializeArray();
+			$.each(form_data, function (key, input) {
+				data.append(input.name, input.value);
+			});
+			//File data
+			if (ids == 'sub-image'){
+				let file_data = ids;
+				console.log(file_data)
 			}
+			if (ids == 'pro-image'){
+				let ids = $('#pro-image')[0].files;
+				console.log(ids)
+
+				for (var i = 0; i <= ids.length; i++) {
+					data.append("files[]", ids[i]);
+				}
+
+			}
+
+			$.ajax({
+				url: '/wp-admin/admin-ajax.php',
+				method: "post",
+				processData: false,
+				contentType: false,
+				dataType: "json",
+				data: data,
+				success: function (result) {
+
+					$('.message.update-fields').html(result.message);
+					//location.search()
+				}
+			});
+
+			checkInput();
+
+			return false;
 		});
-
-		checkInput();
-
-		return false;
-	});
 
 	$('.page-template-new-add .create-room.object-update, .page-template-room .create-room').on("submit", function(){
 		//e.preventDefault()
@@ -1167,6 +1187,7 @@ jQuery(document).ready(function ($) {
 		message += text;
 		message += '</div>';
 		$.fancybox.open(message);
+		setTimeout(() => {location.reload()}, 1500)
 	}
 
 	function favorite(th, id){
@@ -1517,7 +1538,7 @@ jQuery(document).ready(function ($) {
 		$('.form-section').each(function(){
 
 			let attr = $(this).attr('id');
-
+			//console.log(attr)
 			$('#' + attr).find('input, select, textarea').each(function() {
 
 				if($(this).val() == '' && $(this).attr('required')){

@@ -94,11 +94,8 @@ function create_object(){
 	} else {
 		
 		global $wpdb;
-		
-        $result['status'] = 'success';
-        $result['message'] = 'Изменения успешно сохранены!';
         
-        /*$showBtns = function () {
+        $showBtns = function () {
             $btn = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один объект</a>';
             $btn2 = '<a href="<?=home_url(\'/objects/edit/\');?>?post=<?=get_the_ID();?>&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
             if($_POST['select_object'] === "85"){
@@ -109,7 +106,7 @@ function create_object(){
         };
 
         $result['status'] = 'success';
-        $result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. ' . $showBtns;*/
+        $result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. ' . $showBtns();
 		
 		if ( !empty($_FILES['files']) ) {
 			if ( ! function_exists( 'wp_handle_upload' ) ) {
@@ -193,16 +190,6 @@ function create_object(){
 					//$res = $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND meta_key = 'gallery'");
 					$serializePhoto = serialize($del_img);
 					$res = $wpdb->query("UPDATE wp_postmeta SET meta_value = '$serializePhoto' WHERE post_id = $post_id AND meta_key = 'gallery'");
-				}else{
-					
-					$res = $wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '_gallery', 'field_5fe06e7c53d4b'), ($post_id, 'gallery', '')");
-					
-					if($res && $photos){
-						
-						update_field('gallery', $photos, $post_id);
-						
-					}
-					
 				}
 			}
 			

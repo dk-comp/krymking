@@ -1,4 +1,5 @@
 <?
+
 global $wpdb;
 global $current_user;
 
@@ -226,10 +227,6 @@ if (!empty($_POST['send'])) {
 
 
         $link = 'https://securepay.tinkoff.ru/v2/Init';
-
-
-
-
 
 
         $email = 'test@test.com';

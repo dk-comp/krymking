@@ -814,7 +814,7 @@ HERE;
 </html>
 HEREDOC;
 
-	wp_mail($email, $subject, $message, $headers);
+	$result = wp_mail($email, $subject, $message, $headers);
 }
 
 // Запрос на бронирование объекта

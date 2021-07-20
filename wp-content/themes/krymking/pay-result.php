@@ -89,9 +89,9 @@ if (!empty($inv_id)) {
 
     $activeSheet = $phpExel->getActiveSheet();
 
-    $activeSheet->getPageSetup()->setOrientation(\PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
+    $activeSheet->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
 
-    $activeSheet->getPageSetup()->setPaperSize(\PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+    $activeSheet->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
 
     $activeSheet->getPageMargins()->setTop(0.5);
     $activeSheet->getPageMargins()->setRight(0.75);
@@ -184,7 +184,7 @@ if (!empty($inv_id)) {
         ],
     ];
 
-    $rendererName = \PHPExcel_Settings::PDF_RENDERER_TCPDF;
+    $rendererName = PHPExcel_Settings::PDF_RENDERER_TCPDF;
     $rendererLibraryPath = get_template_directory() . '/lib/PHPExcel/tcpdf';
 
     if (!PHPExcel_Settings::setPdfRenderer(
@@ -214,7 +214,7 @@ if (!empty($inv_id)) {
 
         header("Accept-Ranges: bytes");
 
-        header("Content-Length: ".filesize($file));
+        header("Content-Length: " . filesize($file));
 
         header('Content-Disposition:attachment;filename="' . $file . '"');
 

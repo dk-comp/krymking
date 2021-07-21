@@ -1798,7 +1798,7 @@ function pricePeriod($postid) { ?>
 			        return [true, "day-price-season", specificPrice +' ₽'];
 			    }else{
 			        specificPrice = $('.field-price input[name=price]').val();
-			        console.log($('.field-price input[name=price]').val());
+			        //console.log($('.field-price input[name=price]').val());
 
 			        return [true, "", specificPrice +' ₽'];
 			    }
@@ -1892,8 +1892,6 @@ function dates_free($postid) { ?>
 	document.addEventListener('DOMContentLoaded', () => {
 		
 		let submit = document.querySelector('.side-left input[type="submit"]')
-		
-		console.log(submit)
 		
 		if(submit){
 			

@@ -155,9 +155,9 @@ function create_object(){
 		    		}
 			    }
 			}
-			if(!empty(get_post_thumbnail_id($post_id))){
+			//if(!empty(get_post_thumbnail_id($post_id))){
 				set_post_thumbnail($post_id, $photos[0]);
-			}
+			//}
 			if($_SESSION['postId'] === $post_id){
 				
 				unset($_SESSION['postId']);

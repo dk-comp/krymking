@@ -1187,7 +1187,7 @@ jQuery(document).ready(function ($) {
 		message += text;
 		message += '</div>';
 		$.fancybox.open(message);
-		setTimeout(() => {location.reload()}, 1500)
+		//setTimeout(() => {location.reload()}, 1500)
 	}
 
 	function favorite(th, id){

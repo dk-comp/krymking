@@ -97,9 +97,9 @@ function create_object(){
         
         $showBtns = function () {
             $btn = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один объект</a>';
-            $btn2 = '<a href="<?=home_url(\'/objects/edit/\');?>?post=<?=get_the_ID();?>&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
-            if($_POST['select_object'] === "85"){
-                return $btn.'<br>'.$btn2;
+            $btn2 = '<a href="' . home_url('/objects/edit/') . '?post=' . get_the_ID() . '&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
+            if($_POST['object_type'] === "85"){
+                return $btn.$btn2;
             }else {
                 return $btn;
             }

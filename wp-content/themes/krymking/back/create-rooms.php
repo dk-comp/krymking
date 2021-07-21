@@ -94,11 +94,36 @@ function create_object(){
 	} else {
 		
 		global $wpdb;
-        
+
         $showBtns = function () {
             $btn = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один объект</a>';
             $btn2 = '<a href="' . home_url('/objects/edit/') . '?post='.$_POST['post_ID'] . '&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
-            if($_POST['object_type'] === "85"){
+
+            $objectType = !empty($_POST['object_type']) ? $_POST['object_type'] : null;
+
+            if(!$objectType && !empty($_POST['select_hotel'])){
+
+                $taxArr = get_the_terms( (int)$_POST['select_hotel'], 'type' );
+
+                if(!empty($taxArr)){
+
+                    foreach ($taxArr as $item){
+
+                        if(!empty($item->term_id) && $item->term_id === 85){
+
+                            $objectType = '85';
+
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            if($objectType === "85"){
                 return $btn.$btn2;
             }else {
                 return $btn;

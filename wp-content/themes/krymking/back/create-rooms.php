@@ -95,9 +95,44 @@ function create_object(){
 		
 		global $wpdb;
 
+		$selectHotel1 = get_field('select_hotel', $_POST['post_ID']);
+
         $showBtns = function () {
+
+            $hotel = null;
+
+            if(!empty($_POST['select_hotel'])){
+
+                $hotel = $_POST['select_hotel'];
+
+            }else{
+
+                global $wpdb;
+
+                $res = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE meta_value LIKE '%{$_POST['post_ID']}%'  
+                            AND meta_key = 'select_object' AND post_id IN (SELECT ID FROM wp_posts WHERE post_type = 'hotels' AND post_author = 
+                           (SELECT post_author FROM wp_posts WHERE ID = {$_POST['post_ID']}))");
+
+                if($res){
+
+                    foreach ($res as $item){
+
+                        $value = unserialize($item->meta_value);
+
+                        if($value && in_array($_POST['post_ID'], $value))
+                            $hotel = $item->post_id;
+
+                    }
+
+                }
+
+            }
+
+            !$hotel && $hotel = $_POST['post_ID'];
+
+
             $btn = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один объект</a>';
-            $btn2 = '<a href="' . home_url('/objects/edit/') . '?post='.$_POST['post_ID'] . '&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
+            $btn2 = '<a href="' . home_url('/objects/edit/') . '?post='. $hotel . '&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
 
             $objectType = !empty($_POST['object_type']) ? $_POST['object_type'] : null;
 

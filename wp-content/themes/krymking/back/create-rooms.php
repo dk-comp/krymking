@@ -101,17 +101,19 @@ function create_object(){
 
             $objectType = !empty($_POST['object_type']) ? $_POST['object_type'] : null;
 
-            if(!$objectType && !empty($_POST['select_hotel'])){
+            if(!$objectType){
 
-                $taxArr = get_the_terms( (int)$_POST['select_hotel'], 'type' );
+                $hotelId = !empty($_POST['select_hotel']) ? $_POST['select_hotel'] : $_POST['post_ID'];
+
+                $taxArr = get_the_terms( (int)$hotelId, 'type' );
 
                 if(!empty($taxArr)){
 
                     foreach ($taxArr as $item){
 
-                        if(!empty($item->term_id) && $item->term_id === 85){
+                        if(!empty($item->term_id) && ($item->term_id === 84 || $item->term_id === 85 || $item->term_id === 86 || $item->term_id === 87)){
 
-                            $objectType = '85';
+                            $objectType = (string) $item->term_id;
 
                             break;
 
@@ -123,7 +125,7 @@ function create_object(){
 
             }
 
-            if($objectType === "85"){
+            if($objectType === "84" || $objectType === "85" || $objectType === "86" || $objectType === "87"){
                 return $btn.$btn2;
             }else {
                 return $btn;
@@ -132,7 +134,7 @@ function create_object(){
 
         $result['status'] = 'success';
         $result['message'] = 'Поздравляем, Вы проделали большую работу и теперь Ваш объект жилья проходит модерацию. ' . $showBtns();
-		
+
 		if ( !empty($_FILES['files']) ) {
 			if ( ! function_exists( 'wp_handle_upload' ) ) {
 			    require_once( ABSPATH . 'wp-admin/includes/file.php' );

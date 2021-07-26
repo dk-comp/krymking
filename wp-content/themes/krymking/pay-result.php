@@ -35,8 +35,9 @@ if (!empty($inv_id)) {
     $message1 .= '<br>';
     $message1 .= 'С уважением, <br> Команда Krymking.ru';
 
-    if(!wp_mail($customer->user_email, $subject1, $message1, $headers1))
+    if(!wp_mail($customer->user_email, $subject1, $message1, $headers1)){
         mail($customer->user_email, $subject1, $message1, $headers1);
+    }
 
     // Обновляем статус на оплачен
     update_field('booking_status', '2', $inv_id);

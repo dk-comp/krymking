@@ -2907,7 +2907,7 @@ function booking_confirmed() {
 	$headers = 'Content-type: text/html; charset=utf-8'."\r\n".'From: Krymking <info@krymking.ru>';
 
 		// Если объект подключен к мгновенному бронированию
-    $murad = get_field('fast_booking', $post);
+    get_field('fast_booking', $post);
 	if(get_field('fast_booking', $post) == 'Включить') {
 		$subject = 'Благодарим за бронирование №'.$post_id.'';
 
@@ -2933,7 +2933,9 @@ function booking_confirmed() {
 
 	}
 
-	wp_mail($user->user_email, $subject, $message, $headers);
+	if(!wp_mail($user->user_email, $subject, $message, $headers)) {
+        mail($user->user_email, $subject, $message, $headers);
+    }
 }
 add_action('wp_ajax_nopriv_booking_confirmed','booking_confirmed');
 add_action('wp_ajax_booking_confirmed','booking_confirmed');
@@ -2953,9 +2955,11 @@ function booking_canceled() {
 	$message .='Предлагаем Вам забронировать новый вариант, воспользовавшись <a href="'.home_url("/").'">Krymking.ru</a>';
 	$message .='<br>';
 	$message .='<br>';
-	$message .='С уважением, <br> Команда Krymking.ru';	
+	$message .='С уважением, <br> Команда Krymking.ru';
 
-	wp_mail($user->user_email, $subject, $message, $headers);
+    if(!wp_mail($user->user_email, $subject, $message, $headers)) {
+        mail($user->user_email, $subject, $message, $headers);
+    }
 }
 add_action('wp_ajax_nopriv_booking_canceled','booking_canceled');
 add_action('wp_ajax_booking_canceled','booking_canceled');

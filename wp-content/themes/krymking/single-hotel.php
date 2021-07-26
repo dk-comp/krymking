@@ -112,7 +112,7 @@ get_header();
 							<div class="price-total">Всего <?=the_price();?> RUB</div>
 							<div class="button-group">
 								<div class="room-more">Подробнее о номере</div>
-								<div class="btn btn-booking" data-id="<?=$post->ID;?>"  dala-slug="<?=$post->slug?>">Забронировать</div>
+								<div class="btn btn-booking" data-id="<?=$post->ID;?>"  data-slug="<?=$post->slug?>">Забронировать</div>
 							</div>
 							<div class="room-desc">
 								<h4>Правила проживания</h4>

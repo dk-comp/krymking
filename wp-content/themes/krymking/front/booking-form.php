@@ -2,7 +2,8 @@
 <?php 	$terms = get_the_terms(get_field('select_hotel')->ID, 'type' );?>
 <?php 	$term = array_shift( $terms )?>
 
-<?php if($term->term_id != 85 && $term->term_id != 86 && $term->term_id != 87 ) : ?>
+
+<div  <?php if($term->term_id != 83 && $term->term_id != 89 && $term->term_id != 90 && $term->term_id != 91) echo "style='display: none'"?>>
 <div class="button-booking">Забронировать номер</div>
 <div class="booking-title">Бронирование</div>
 <div class="form">
@@ -14,23 +15,31 @@
     
     <form action="/booking/" method="post" class="sidebar-form-content">
 	    
-        <input type="hidden" name="post_id" value="<?=$postid?>">
+        <input type="hidden" name="post_id" value="<?php if($postid){echo $postid;}else{ echo $post_id;}?>">
         <input type="hidden" name="hotel_id" value="<?=$hotel_id?>">
         <input type="hidden" name="room_id" value="<?=$hotel_id?>">
         
         <input type="hidden" name="price" value="<?=the_price($hotel_id)?>">
 
-        <input type="hidden" name="adults" value="<?=guests_adults()?>">
+        <input type="hidden" name="adults" value="<?php if(!$_SESSION['adults']){echo 1;}else{ echo guests_adults();}?>">
         <input type="hidden" name="children" value="<?=guests_childrens()?>">
         <input type="hidden" name="babies" value="<?=guests_babies()?>">
 
         <div class="flexbox">
 	        
             <div class="form-field form-in">
-                <input type="text" name="check_in" value="<?=$_SESSION['check_in'];?>" placeholder="Заезд" autocomplete="off" required class="datepicker text-field">
+                <input type="text" name="check_in" value="<?php if($_SESSION['check_in']){
+                	echo $_SESSION['check_in'];
+                }else{
+                	echo date('d.m.Y');
+                };?>" placeholder="Заезд" autocomplete="off" required class="datepicker text-field">
             </div>
             <div class="form-field form-out">
-                <input type="text" name="check_out" value="<?=$_SESSION['check_out'];?>" placeholder="Выезд" autocomplete="off" required class="datepicker text-field">
+                <input type="text" name="check_out" value="<?php if($_SESSION['check_out']){
+	                echo $_SESSION['check_out'];
+                }else{
+	                echo date('d.m.Y', strtotime("+1 day"));
+                }?>" placeholder="Выезд" autocomplete="off" required class="datepicker text-field">
             </div>
 	        
         </div>
@@ -75,4 +84,5 @@
             <?=calc_amount(days($_SESSION['check_in'], $_SESSION['check_out']), the_price($hotel_id));?>
         </div>
     </div>
-<?php endif; ?>
+<?php /*endif; */?>
+</div>

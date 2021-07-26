@@ -1180,7 +1180,6 @@ jQuery(document).ready(function ($) {
 		});
 	});
 
-
 	// favorite
 	function MessagePopup(text) {
 		message = '<div class="message-content">';
@@ -1538,7 +1537,7 @@ jQuery(document).ready(function ($) {
 		$('.form-section').each(function(){
 
 			let attr = $(this).attr('id');
-			//console.log(attr)
+
 			$('#' + attr).find('input, select, textarea').each(function() {
 
 				if($(this).val() == '' && $(this).attr('required')){
@@ -1594,7 +1593,7 @@ jQuery(document).ready(function ($) {
 				'post_id' : $(this).attr('data-id')
 			},
 			success:function(result){
-				console.log(result)
+				//console.log(result)
 			}
 	   });
 	});

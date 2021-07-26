@@ -2508,7 +2508,7 @@ function guests_babies() {
 }
 
 function guests() {
-	return $_SESSION['counts_guests'] ? $_SESSION['counts_guests'] : '';
+	return $_SESSION['counts_guests'] ? $_SESSION['counts_guests'] : '1';
 }
 
 function hideNumber($phone) {

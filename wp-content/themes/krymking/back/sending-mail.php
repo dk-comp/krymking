@@ -681,7 +681,7 @@ td .es-button-border-2:hover {
                         <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:24px;color:#333333;font-size:16px">
 HERE;
 
-    $message .= 'Уважаемый Пользователь! Спасибо Вам за регистрацию на сайте krymking.ru<br> Ваш личный кабинет создан. Нажмите кнопку <a style="color:red; text-decoration: none; padding: 0 5px;" href="'.home_url("/confirm").'?token='.$token.'&email=' . urlencode(base64_encode($email )). '">«подтвердить»</a> для активации учетной записи или пройдите по ссылке <a style="text-decoration: none; color: #0000ff;" href="' .home_url("/confirm").'?token='.$token.'">'.home_url("/confirm").'?token='.$token.'</a>';
+    $message .= 'Ваш личный кабинет создан. Нажмите кнопку <a style="color:red; text-decoration: none; padding: 0 5px;" href="'.home_url("/confirm").'?token='.$token.'">«подтвердить»</a> для активации учетной записи или пройдите по ссылке <a style="text-decoration: none; color: #0000ff;" href="' .home_url("/confirm").'?token='.$token.'">'.home_url("/confirm").'?token='.$token.'</a>' ;
     $message .= <<<HEREDOC
 </p>
                       </td> 

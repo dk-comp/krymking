@@ -35,8 +35,9 @@ if (!empty($inv_id)) {
     $message1 .= '<br>';
     $message1 .= 'С уважением, <br> Команда Krymking.ru';
 
-    if(!wp_mail($customer->user_email, $subject1, $message1, $headers1))
+    if(!wp_mail($customer->user_email, $subject1, $message1, $headers1)) {
         mail($customer->user_email, $subject1, $message1, $headers1);
+    }
 
     // Обновляем статус на оплачен
     update_field('booking_status', '2', $inv_id);
@@ -279,12 +280,31 @@ get_header();
 
 <? if ( !empty($inv_id) ) {
 
-		echo '<div class="success-text">Благодарим за бронирование на Крымкинг.ру! После подтверждения оплаты на Ваш электронный адрес будет отправлен Ваучер на заселение с контактной информацией о Владельце и забронированном жилье.  Откройте электронное письмо от Krymking.ru с Ваучером и сохраните или распечатайте его.</div>';
-		
-		// exit();	
-	// } else {
-	// 	echo '<div class="success-text">Произошла ошибка</div>';
-	// }
+	echo '<div class="success-text">Благодарим за бронирование на Крымкинг.ру! После подтверждения оплаты на Ваш электронный адрес будет отправлен Ваучер на заселение с контактной информацией о Владельце и забронированном жилье.  Откройте электронное письмо от Krymking.ru с Ваучером и сохраните или распечатайте его.</div>';
+
+    global $wpdb;
+    $post = get_post($post_id);
+    $author = get_userdata($post->post_author);
+
+    $headers1 = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
+    $subject1 = 'Благодарим за бронирование';
+
+    $messageContent = 'Поздравляем, Ваш объект жилья id-номер ХХХ забронирован Гостем. Для получения детальной информации перейдите в' . '<a href="' . home_url('/profile/objects/') . '">Личный кабинет</a>';
+    $messageContent .= 'Напоминаем, что Вы можете обмениваться сообщениями со своими гостями на сайте <a target="_blank" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#178DE0;font-size:16px" href="http://krymking.ru/">Krymking.ru</a>.<br>';
+    $messageContent .= 'Зарабатывайте с удовольствием!<br>';
+
+    $message2 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/'. get_template() .'/back/mail_template.php';
+
+    $message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
+    $message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
+    $message = str_replace('<<LASTNAME>>', $author->last_name, $message2);
+
+    if(!wp_mail($author->user_email, $subject, $message, $headers)){
+
+        mail($author->user_email, $subject, $message, $headers);
+
+    }
+
 } else { 
 	echo '<div class="success-text">Произошла ошибка</div>';
 } ?>

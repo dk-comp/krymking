@@ -440,7 +440,7 @@ jQuery(document).ready(function ($) {
 
 	slider();
 
- 	function data_param() {
+ 	function data_param(callback) {
 
  		let postRow = document.querySelector('[name="post_id"]')
 
@@ -453,6 +453,7 @@ jQuery(document).ready(function ($) {
 			data: {
 				'post_id': postId,
 				'action' : 'data_param',
+				'room_id': $('input[name="room_id"]').val(),
 				'counts_guests' : $('input[name="counts_guests"]').val(),
 				'check_in' : $('input[name="check_in"]').val(),
 				'check_out' : $('input[name="check_out"]').val(),
@@ -462,19 +463,37 @@ jQuery(document).ready(function ($) {
 			},
 			success:function(result){
 				var elem = document.getElementById('single')
+				var room = document.getElementsByClassName('btn-booking')
+				var buttonSendPay = document.getElementsByClassName('btn-submit')
 
 				if(elem){
 
 					if (result){
-						alert(result)
+
 						elem.disabled = true
 						elem.classList.add('disabled')
+
+						console.log(result)
+
 					}else{
 						elem.disabled = false
 						elem.classList.remove('disabled')
 					}
 
 				}
+				// if (room.length) {
+				//
+				// 	if (result) {
+				// 		room.disabled = true
+				// 		room.classList.add('disabled')
+				//
+				// 	} else {
+				// 		room.disabled = false
+				// 		room.classList.remove('disabled')
+				// 	}
+				// }
+
+				callback && callback(result, elem, room, buttonSendPay)
 
 			},
 			error:function (result){
@@ -1578,8 +1597,43 @@ jQuery(document).ready(function ($) {
 	});
 
 	$(document).on('click', '.variants-rooms .room-item .btn-booking', function() {
+
 		$('input[name="room_id"]').val($(this).attr('data-id'));
-		$('.sidebar-form-content .submit-room').click();
+
+			data_param(function(res, elem, room, buttonSendPay){
+
+				if(!res){
+
+					$('.sidebar-form-content .submit-room').click();
+
+				}else{
+
+					alert(res)
+					location.reload()
+				}
+
+			})
+
+	});
+
+	$(document).on('click', '.bookingForm .input-group .btn-submit', function() {
+
+		data_param(function(res, elem, room, buttonSendPay){
+
+			console.log(res)
+			return false
+			if(!res){
+
+				//$('.input-group .btn-submit').click();
+
+			}else{
+
+				alert(res)
+
+			}
+
+		})
+
 	});
 
 

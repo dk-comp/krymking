@@ -15,9 +15,8 @@ $api = new TinkoffMerchantAPI(
 $enabledTaxation = true;
 //$amount = 1000 * 100;
 
-
-function balanceAmount($isShipping, $items, $amount)
-{
+function balanceAmount($isShipping, $items, $amount){
+	
     $itemsWithoutShipping = $items;
 
     if ($isShipping) {
@@ -183,7 +182,7 @@ if (!empty($_POST['send'])) {
 
         if(!wp_mail($author->user_email, $subject, $message, $headers)){
 
-            mail($author->user_email, $subject, $message, $headers);
+            wp_mail($author->user_email, $subject, $message, $headers);
 
         }
 
@@ -197,122 +196,196 @@ if (!empty($_POST['send'])) {
 
         $prepay = calc_percent(price_total($price, $days));//стоимость с днями
         $prepay_kope = $prepay * 100;//стоимость в копейках
-
-        $date_start = wp_date( 'j F Y', strtotime($_POST['check_in']) );
-        $date_end = wp_date( 'j F Y', strtotime($_POST['check_out']) );
-
-        $message = 'Оплата бронирования на сайте Krymking.ru: бронь №'.$post_id.', ';
-        $message .= ''.address($_POST['post_id']).', ';
-        $message .= 'заезд '.$date_start.' г., выезд '.$date_end.' г. Сумма к оплате '.$prepay.' рублей.';
-
-        //https://www.tinkoff.ru/kassa/develop/api/payments/init-description/ - апи на тинькове
-	    $arr['TerminalKey'] = "TinkoffBankTest";
-        $arr['Amount'] = $prepay_kope;
-        $arr['OrderId'] = $post_id;
-        $arr['Description'] = $message;
-        //$arr['DATA']['Phone'] = '+71234567890';
-        $arr['DATA']['Email'] = $_POST['user_email'];
-
-        $arr['Receipt']['Email'] = $_POST['user_email'];//емейл клиента
-        //$arr['Receipt']['Phone'] = "+79031234567";
-        $arr['Receipt']['EmailCompany'] = "contact@krymking.ru";//емейл фирмы
-        $arr['Receipt']['Taxation'] = "usn_income_outcome";//система налог ображения
-        $arr['Receipt']['Items']['Name'] = $_POST['post_id'];//Должно быть название товара
-        $arr['Receipt']['Items']['Price'] = $prepay_kope;//цена за еденицу товара в копейках
-        $arr['Receipt']['Items']['Quantity'] = '1.00';//Количество или вес товара
-        $arr['Receipt']['Items']['Amount'] = $prepay_kope;//стоимость товра в копейках
-        $arr['Receipt']['Items']['PaymentMethod'] = 'advance';//оплата аванса
-        $arr['Receipt']['Items']['PaymentObject'] = 'service';//передаю за что деньги в данном случае услуга
-        $arr['Receipt']['Items']['Tax'] = 'none';//передаю данны о ндс
-
-
-        $link = 'https://securepay.tinkoff.ru/v2/Init';
-
-
-        $email = 'test@test.com';
-        $emailCompany = 'testCompany@test.com';
-        $phone = '89179990000';
-
-
-        $receiptItem = [[
-            'Name'          => 'product1',
-            'Price'         => $prepay_kope,
-            'Quantity'      => 1,
-            'Amount'        => $prepay_kope,
-            'PaymentMethod' => 'advance',
-            'PaymentObject' => 'service',
-            'Tax'           => 'none'
-        ]];
-
-        $isShipping = false;
-
-        if (!empty($isShipping[2]['Name'] === 'shipping')) {
-            $isShipping = true;
-        }
-
-        $enabledTaxation = true;
-
-        $receipt = [
-            'EmailCompany' => "contact@krymking.ru",
-            'Email'        => $_POST['user_email'],
-            'Taxation'     => "usn_income_outcome",
-            'Items'        => balanceAmount($isShipping, $receiptItem, $prepay_kope),
-        ];
-
-
-        $params = [
-            'OrderId' => $post_id,
-            'Amount'  => $prepay_kope,
-            'DATA'    => [
-                'Email'           => $_POST['user_email'],
-                'Connection_type' => 'example'
-            ],
-        ];
-
-        if ($enabledTaxation) {
-            $params['Receipt'] = $receipt;
-        }
-
-        $api->init($params);
-
-
-
-        header('Location:' . $api->paymentUrl);
-
-
-
-
-/*
-		$mrh_pass1 = "zV395RuabF6HbqbmWRJ3";
-
-		$days = days($_POST['check_in'], $_POST['check_out']);
-		$price = the_price($_POST['post_id']);
-		$prepay = calc_percent(price_total($price, $days));
-
-		$date_start = wp_date( 'j F Y', strtotime($_POST['check_in']) );
-		$date_end = wp_date( 'j F Y', strtotime($_POST['check_out']) );
-
-		$message = 'Оплата бронирования на сайте Krymking.ru: бронь №'.$post_id.', ';
-		$message .= ''.address($_POST['post_id']).', ';
-		$message .= 'заезд '.$date_start.' г., выезд '.$date_end.' г. Сумма к оплате '.$prepay.' рублей.';
-
-		$params = array(
-			'MerchantLogin' => 'krymking.ru', // Идентификатор магазина
-			'InvId'         => $post_id, // ID заказа
-			'Description'   => $message, // Описание заказа (мах 100 символов)
-			'OutSum'        => $prepay, // Сумма заказа
-			'Culture'       => 'ru',
-			'Email'			=> $_POST['user_email'],
-			'Encoding'      => 'utf-8',
-			'IsTest'        => 1, // Тестовый режим
-		);
-
-		// Формирование подписи
-		$params['SignatureValue'] = md5("{$params['MerchantLogin']}:{$params['OutSum']}:{$params['InvId']}:{$mrh_pass1}");
-
-		// Перенаправляем пользователя на страницу оплаты
-		header('Location: https://auth.robokassa.ru/Merchant/Index.aspx?' . urldecode(http_build_query($params)));
-*/
+		
+		$fieldDates = get_field('free_dates', $_POST['post_id']);
+		$minimumBooking = get_field('minimum_booking', $_POST['post_id'])['value'];
+		$countsGuests = get_field('guests_count', $_POST['post_id']);
+		$countBooking = days($_POST['check_in'], $_POST['check_out']);
+		
+		if ( $fieldDates ) {
+			
+			$dates = [];
+			
+			foreach ($fieldDates as $date) {
+				
+				$interval_date = date_diff(date_create($date['date_from']), date_create($date['date_to']))->days+1;
+				
+				for($i = 1; $i <= $interval_date ; $i++){
+					
+					$dates[] = date('d.m.Y',(strtotime($date['date_from'])+86400*($i-1)));
+					
+				}
+				
+			}
+			
+		} else {
+			
+			$flag = false;
+			
+			if(!empty($post_id)){
+				
+				$result = filters(true);
+				
+				foreach($result as $res){
+					if($res->ID === $_POST['post_id']){
+						$flag = true;
+						break;
+					}
+				}
+				
+			}else{
+				
+				$flag = true;
+				
+			}
+			
+		}
+		
+		if($flag){
+			
+			$date_start = wp_date( 'j F Y', strtotime($_POST['check_in']) );
+			$date_end = wp_date( 'j F Y', strtotime($_POST['check_out']) );
+			
+			$message = 'Оплата бронирования на сайте Krymking.ru: бронь №'.$post_id.', ';
+			$message .= ''.address($_POST['post_id']).', ';
+			$message .= 'заезд '.$date_start.' г., выезд '.$date_end.' г. Сумма к оплате '.$prepay.' рублей.';
+			
+			//https://www.tinkoff.ru/kassa/develop/api/payments/init-description/ - апи на тинькове
+			$arr['TerminalKey'] = "TinkoffBankTest";
+			$arr['Amount'] = $prepay_kope;
+			$arr['OrderId'] = $post_id;
+			$arr['Description'] = $message;
+			//$arr['DATA']['Phone'] = '+71234567890';
+			$arr['DATA']['Email'] = $_POST['user_email'];
+			
+			$arr['Receipt']['Email'] = $_POST['user_email'];//емейл клиента
+			//$arr['Receipt']['Phone'] = "+79031234567";
+			$arr['Receipt']['EmailCompany'] = "contact@krymking.ru";//емейл фирмы
+			$arr['Receipt']['Taxation'] = "usn_income_outcome";//система налог ображения
+			$arr['Receipt']['Items']['Name'] = $_POST['post_id'];//Должно быть название товара
+			$arr['Receipt']['Items']['Price'] = $prepay_kope;//цена за еденицу товара в копейках
+			$arr['Receipt']['Items']['Quantity'] = '1.00';//Количество или вес товара
+			$arr['Receipt']['Items']['Amount'] = $prepay_kope;//стоимость товра в копейках
+			$arr['Receipt']['Items']['PaymentMethod'] = 'advance';//оплата аванса
+			$arr['Receipt']['Items']['PaymentObject'] = 'service';//передаю за что деньги в данном случае услуга
+			$arr['Receipt']['Items']['Tax'] = 'none';//передаю данны о ндс
+			
+			
+			$link = 'https://securepay.tinkoff.ru/v2/Init';
+			
+			
+			$email = 'test@test.com';
+			$emailCompany = 'testCompany@test.com';
+			$phone = '89179990000';
+			
+			
+			$receiptItem = [[
+					'Name'          => 'product1',
+					'Price'         => $prepay_kope,
+					'Quantity'      => 1,
+					'Amount'        => $prepay_kope,
+					'PaymentMethod' => 'advance',
+					'PaymentObject' => 'service',
+					'Tax'           => 'none'
+			]];
+			
+			$isShipping = false;
+			
+			if (!empty($isShipping[2]['Name'] === 'shipping')) {
+				$isShipping = true;
+			}
+			
+			$enabledTaxation = true;
+			
+			$receipt = [
+					'EmailCompany' => "contact@krymking.ru",
+					'Email'        => $_POST['user_email'],
+					'Taxation'     => "usn_income_outcome",
+					'Items'        => balanceAmount($isShipping, $receiptItem, $prepay_kope),
+			];
+			
+			
+			$params = [
+					'OrderId' => $post_id,
+					'Amount'  => $prepay_kope,
+					'DATA'    => [
+							'Email'           => $_POST['user_email'],
+							'Connection_type' => 'example'
+					],
+			];
+			
+			if ($enabledTaxation) {
+				$params['Receipt'] = $receipt;
+			}
+			
+			$api->init($params);
+			
+			
+			
+			header('Location:' . $api->paymentUrl);
+			
+			
+			
+			
+			/*
+					$mrh_pass1 = "zV395RuabF6HbqbmWRJ3";
+			
+					$days = days($_POST['check_in'], $_POST['check_out']);
+					$price = the_price($_POST['post_id']);
+					$prepay = calc_percent(price_total($price, $days));
+			
+					$date_start = wp_date( 'j F Y', strtotime($_POST['check_in']) );
+					$date_end = wp_date( 'j F Y', strtotime($_POST['check_out']) );
+			
+					$message = 'Оплата бронирования на сайте Krymking.ru: бронь №'.$post_id.', ';
+					$message .= ''.address($_POST['post_id']).', ';
+					$message .= 'заезд '.$date_start.' г., выезд '.$date_end.' г. Сумма к оплате '.$prepay.' рублей.';
+			
+					$params = array(
+						'MerchantLogin' => 'krymking.ru', // Идентификатор магазина
+						'InvId'         => $post_id, // ID заказа
+						'Description'   => $message, // Описание заказа (мах 100 символов)
+						'OutSum'        => $prepay, // Сумма заказа
+						'Culture'       => 'ru',
+						'Email'			=> $_POST['user_email'],
+						'Encoding'      => 'utf-8',
+						'IsTest'        => 1, // Тестовый режим
+					);
+			
+					// Формирование подписи
+					$params['SignatureValue'] = md5("{$params['MerchantLogin']}:{$params['OutSum']}:{$params['InvId']}:{$mrh_pass1}");
+			
+					// Перенаправляем пользователя на страницу оплаты
+					header('Location: https://auth.robokassa.ru/Merchant/Index.aspx?' . urldecode(http_build_query($params)));
+			*/
+			
+			/*$_SESSION['post_id'] = $_POST['post_id'];
+			$_SESSION['check_in'] = $_POST['check_in'];
+			$_SESSION['check_out'] = $_POST['check_out'];
+			
+			$_SESSION['adults'] = $_POST['adults'];
+			$_SESSION['children'] = $_POST['children'];
+			$_SESSION['babies'] = $_POST['babies'];
+			
+			$_SESSION['counts_guests'] = $_POST['counts_guests'];*/
+		}else{
+			
+			if(in_array($_POST['check_in'], $dates, false) || in_array($_POST['check_out'], $dates,false)){
+				echo 'Вы не можете забронировать это жилье на выбранный период, т.к. оно на этот период занято. Посмотрите, пожалуйста, свободные даты в Календаре бронирования ';
+			}
+			if($countBooking < $minimumBooking){
+				echo 'Вы не можете забронировать это жилье на выбранный период, т.к. минимальный период проживания в нем — ' . $minimumBooking * 1 .
+						' количество суток. Увеличьте период проживания до необходимого минимального кол-ва суток ';
+			}
+			if($countsGuests < ($_POST['adults'] + $_POST['children'])){
+				echo 'Вы не можете забронировать это жилье, т.к. в нем возможно проживание не более - '. $countsGuests .' человек. Посмотрите, пожалуйста, другие объекты на нашем сайте';
+			}
+			if(!$post_id){
+				echo 'Вы не можете продолжить бронирование или оплату т.к. попали на эту страницу случайно';
+			}
+			
+		}
+  
 	} elseif ($_POST['send'] == 'request') {
 		// Перенаправляем пользователя на страницу запроса
 
@@ -343,7 +416,7 @@ if (!empty($_POST['send'])) {
 
 		if(!wp_mail($email_to, $subject2, $message, $headers2)){
 
-            mail($email_to, $subject2, $message, $headers2);
+            wp_mail($email_to, $subject2, $message, $headers2, '');
 
         }
 
@@ -415,7 +488,7 @@ get_header();
 					<li><span>Оплата при заселении</span> <strong><?=price_total($price, $days)-calc_percent(price_total($price, $days));?> RUB</strong></li>
 				</ul>
 				<div class="booking-commissions">Без комиссий и сборов</div>
-<!-- 				<div class="btn btn-close">Отменить бронирование</div> -->
+				<!--<div class="btn btn-close">Отменить бронирование</div> -->
 			</div>
 
 
@@ -531,23 +604,24 @@ get_header();
 					<label class="custom-checkbox"><input type="checkbox" name="agreement" class="custom-input" checked=""><div class="check"></div></label>
 					<span class="text">Нажимая на кнопку 
 						
-				<? if(get_field('fast_booking', $booking_id) == 'Включить' || get_post_status( $_GET['booking-id'] ) == 'confirmed') { ?>
-					«Внести предоплату»
-				<? } else { ?>
-					«Запросить бронирование»
-				<? } ?>
+					<? if(get_field('fast_booking', $booking_id) == 'Включить' || get_post_status( $_GET['booking-id'] ) == 'confirmed') { ?>
+						«Внести предоплату»
+					<? } else { ?>
+						«Запросить бронирование»
+					<? } ?>
 					
 					, Вы соглашаетесь с <span>Правилами проживания</span> и <a href="/gostyam/pravila-otmeny-bronirovaniya/" target="_blank">Правилами отмены бронирования</a></span>
 				</div>
 				<div class="input-group">
 				
-				<? if(get_field('fast_booking', $booking_id) == 'Включить' || get_post_status( $_GET['booking-id'] ) == 'confirmed') { ?>
-					<button type="submit" class="btn btn-submit">Внести предоплату</button>
-					<input type="hidden" name="send" value="payment">
-				<? } else { ?>
-					<button type="submit" class="btn btn-submit">Запросить бронирование</button>
-					<input type="hidden" name="send" value="request">
-				<? } ?>
+					<? if(get_field('fast_booking', $booking_id) == 'Включить' || get_post_status( $_GET['booking-id'] ) == 'confirmed') { ?>
+						<button type="submit" class="btn btn-submit">Внести предоплату</button>
+						<input type="hidden" name="send" value="payment">
+					<? } else { ?>
+						<button type="submit" class="btn btn-submit">Запросить бронирование</button>
+						<input type="hidden" name="send" value="request">
+					<? } ?>
+					
 				</div>
 			</form>
 		</div>

@@ -1411,11 +1411,19 @@ add_action('wp_ajax_search_suggest','search_suggest');
 function data_param() {
 
     $post_id = $_POST['post_id'];
-    $fieldDates = get_field('free_dates', $post_id);
-    $minimumBooking = get_field('minimum_booking', $post_id)['value'];
+    $room_id = $_POST['room_id'];
+    if($post_id !== $room_id){
+	    $fieldDates = get_field('free_dates', $room_id);
+	    $minimumBooking = get_field('minimum_booking', $room_id)['value'];
+	    $countsGuests = get_field('guests_count', $room_id);
+    }else{
+	    $fieldDates = get_field('free_dates', $post_id);
+	    $minimumBooking = get_field('minimum_booking', $post_id)['value'];
+	    $countsGuests = get_field('guests_count', $post_id);
+    }
+    
     $countBooking = days($_POST['check_in'], $_POST['check_out']);
-    $countsGuests = get_field('guests_count', $post_id);
-
+    
 
     if ( $fieldDates ) {
 
@@ -1467,15 +1475,19 @@ function data_param() {
 
         $_SESSION['counts_guests'] = $_POST['counts_guests'];
     }else{
+    	
         if(in_array($_POST['check_in'], $dates, false) || in_array($_POST['check_out'], $dates,false)){
-            echo 'Вы не можете забронировать это жилье на выбранный период, т.к. оно на этот период занято. Посмотрите, пожалуйста, свободные даты в Календаре бронирования';
+            echo 'Вы не можете забронировать это жилье на выбранный период, т.к. оно на этот период занято. Посмотрите, пожалуйста, свободные даты в Календаре бронирования ';
         }
         if($countBooking < $minimumBooking){
-            echo 'Вы не можете забронировать это жилье на выбранный период, т.к. минимальный период проживания в нем — ' . $minimumBooking .
-                ' количество суток. Увеличьте период проживания до необходимого минимального кол-ва суток';
+            echo 'Вы не можете забронировать это жилье на выбранный период, т.к. минимальный период проживания в нем — ' . $minimumBooking * 1 .
+                ' количество суток. Увеличьте период проживания до необходимого минимального кол-ва суток ';
         }
         if($countsGuests < ($_POST['adults'] + $_POST['children'])){
             echo 'Вы не можете забронировать это жилье, т.к. в нем возможно проживание не более - '. $countsGuests .' человек. Посмотрите, пожалуйста, другие объекты на нашем сайте';
+        }
+        if(!$post_id){
+        	echo 'Вы не можете продолжить бронирование или оплату т.к. попали на эту страницу случайно';
         }
 
     }
@@ -1833,7 +1845,6 @@ function dates_free($postid) { ?>
 		$disabledDays = "null";
 	} ?>
 	
-
 <script>
 	
 	var disabledDays = <?=$disabledDays?>;
@@ -1873,7 +1884,7 @@ function dates_free($postid) { ?>
 				// extensionRange - объект расширения
 				
 				resDates = extensionRange.datesText;
-				
+				console.log(resDates)
 				//console.log(extensionRange)
 				$('[name=multipleDate]').val(extensionRange.datesText.join('\n'));
 				
@@ -2066,7 +2077,6 @@ function freeDates() {
 	
 	$a=$datesStart;
 	
-	
 	// сохраняем значение для повторителя
 	
 	if($result){
@@ -2131,7 +2141,7 @@ function freeDates() {
 			
 			$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '_{$rowFrom}', '$field_key_from')");
 			
-			$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '_{$rowTo}', '$field_key_from')");
+			$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '_{$rowTo}', '$field_key_to')");
 			
 			$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '{$rowFrom}', '{$dateFrom}')");
 			
@@ -2189,6 +2199,7 @@ function wp_ajax_delete_image(){
 						if($res) $resultFlag = true;
 						
 					}
+					
 				}
 				
 			}

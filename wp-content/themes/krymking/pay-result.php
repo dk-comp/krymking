@@ -66,7 +66,47 @@ if (!empty($inv_id)) {
     $days = days($check_in, $check_out);
     $price = the_price($object->ID);
     $total = price_total($price, $days);
-
+	
+	$fieldDates = get_field('free_dates', $object->ID);
+	
+	global $wpdb;
+	
+	$field_key_from = "field_602f6aea7ce21";
+	$field_key_to = 'field_60643922b477e';
+	
+	$dateFrom = (new DateTime($check_in))->format('Ymd');
+	$dateTo = (new DateTime($check_out))->format('Ymd');
+	
+	$fieldsFrom = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $object->ID AND meta_value = '$dateFrom' AND meta_key LIKE 'free_dates%'");
+	
+	$fieldsTo = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $object->ID AND meta_value = '$dateFrom' AND meta_key LIKE 'free_dates%'");
+	
+	$allDatesRows = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $object->ID AND meta_key = 'free_dates'");
+	
+	if(!$fieldsFrom || !$fieldsTo){
+		
+		$allDatesRows = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $object->ID AND meta_key = 'free_dates'");
+		
+		$allCount = (int)$allDatesRows[0]->meta_value;
+		
+		$rowFrom = "free_dates_{$allCount}_date_from";
+		
+		$rowTo = "free_dates_{$allCount}_date_to";
+		
+		$allCount++;
+		
+		$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($object->ID, '_{$rowFrom}', '$field_key_from')");
+		
+		$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($object->ID, '_{$rowTo}', '$field_key_to')");
+		
+		$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($object->ID, '{$rowFrom}', '{$dateFrom}')");
+		
+		$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($object->ID, '{$rowTo}', '{$dateTo}')");
+		
+		$wpdb->query("UPDATE wp_postmeta SET meta_value = '$allCount' WHERE meta_id = {$allDatesRows[0]->meta_id}");
+		
+	}
+    
     $fileContentArr = [
         'Номер бронирования' => $inv_id,
         'Название объекта' => $object->post_title,

@@ -32,6 +32,7 @@
                 <div class="price-total">Всего <?=price_total(the_price(), days($_SESSION['check_in'], $_SESSION['check_out']) );?> RUB</div>
                 <div class="button-group">
                     <div class="room-more">Подробнее о номере</div>
+	                <!--<button type="submit" class="btn btn-booking" data-id="<?/*=get_the_ID();*/?>">Забронировать</button>-->
 	                <div class="btn btn-booking" data-id="<?=get_the_ID();?>">Забронировать</div>
                 </div>
                 <div class="room-calendar">Календарь и свободные даты этого номера</div>

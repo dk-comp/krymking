@@ -2,6 +2,10 @@
 
 global $wpdb;
 global $current_user;
+global $messageError;
+global $days;
+global $price;
+global $total;
 
 include 'TinkoffMerchantAPI.php';
 
@@ -62,10 +66,6 @@ function balanceAmount($isShipping, $items, $amount){
 }
 
 
-
-
-
-
 if($_GET['booking-id']) {
 	$booking_id = get_field('apartment', $_GET['booking-id']);
 	$check_in   = get_field('check_in', $_GET['booking-id']);
@@ -83,172 +83,161 @@ $price = the_price($booking_id);
 $total = price_total($price, $days);
  
 if (!empty($_POST['send'])) {
-
-	if(empty($_GET['booking-id'])) {
-
-        $start1 = microtime(true);
-
-		if(get_field('fast_booking',  $_POST['post_id']) == 'Включить') {
-			$status = 'confirmed';
-		} else {
-			$status = 'request';
-		}
-
-		$post_id = wp_insert_post(  wp_slash( array(
-			'post_status'   => $status,
-			'post_type'     => 'orders',
-			'post_title'    => 'Бронирование №'. SecondLastPostId(),
-			'post_content'  => '',
-			'post_author'   => get_post($_POST['post_id'])->post_author,
-			'ping_status'   => get_option('default_ping_status'),
-			'meta_input'    => [ 'meta_key'=>'meta_value' ],
-		) ) );
-
-		if( is_wp_error($post_id) ){
-
-			$result['error'] = 'success';
-			$result['message'] = $post_id->get_error_message();
-		} else {
-
-		    $result['status'] = 'success';
-			$result['message'] = 'Бронирование № '.SecondLastPostId();
-
-			update_field('check_in', $_POST['check_in'], $post_id);
-			update_field('check_out', $_POST['check_out'], $post_id);
-			update_field('guests', $_POST['guests'], $post_id);
-			update_field('comment', $_POST['comment'], $post_id);
-			update_field('apartment', $_POST['post_id'], $post_id);
-			update_field('time_arrival', $_POST['time_arrival'], $post_id);
-
-			$user = get_user_by('email', $_POST['user_email']);
-			$user_id = $user->ID;
-
-			update_field('customer', $user_id, $post_id);
-			update_field('booking_status', '1', $post_id);
-
-			update_field('user_name', $_POST['user_name'], $post_id);
-			update_field('user_lastname', $_POST['user_lastname'], $post_id);
-			update_field('user_email', $_POST['user_email'], $post_id);
-			update_field('user_phone', $_POST['phone'], $post_id);
-			update_field('main_guest', $_POST['main_guest'], $post_id);
-
-		}
-
-		$post = get_post($_POST['post_id']);
-		$author = get_userdata($post->post_author);
-
-		// Письмо владельцу
-		if ( get_field('fast_booking', $post->ID ) == 'Включить') {
-
-			// Мгновенное бронирование
-			$headers = 'Content-type: text/html; charset=utf-8'."\r\n".'From: Krymking <info@krymking.ru>';
-			$subject = 'Бронирования объекта на сайте Krymking.ru';
-
-            $messageContent = 'Поздравляем, Ваш объект жилья id-номер '.$post->ID.' забронирован Гостем. ';
-            $messageContent .= 'Для получения детальной информации перейдите в <a href="'.home_url("/profile/").'">Личный кабинет</a>. ';
-            $messageContent .= 'Напоминаем, что Вы можете обмениваться сообщениями со своими гостями на сайте Krymking.ru.';
-            $messageContent .='<br>';
-            $messageContent .='<br>';
-            $messageContent .='Зарабатывайте с удовольствием!';
-            $messageContent .='<br>';
-            $messageContent .='С уважением, <br> Команда Krymking.ru';
-
-            $message2 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/'. get_template() .'/back/mail_template.php';
-
-            $message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
-            $message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
-            $message = str_replace('<<LASTNAME>>', $author->last_name, $message2);
-
 	
-		} else {
-
-			// Без мгновенного бронирования
-			$headers = 'Content-type: text/html; charset=utf-8'."\r\n".'From: Krymking <info@krymking.ru>';
-			$subject = 'Бронирования объекта на сайте Krymking.ru';
-
-            $messageContent = 'По Вашему объекту жилья id-номер '.$post->ID.' пришел запрос на бронирование. ';
-            $messageContent .= 'Для получения детальной информации перейдите в <a href="'.home_url("/profile/orders/").'">Личный кабинет</a>. ';
-            $messageContent .='<br>';
-            $messageContent .='<br>';
-            $messageContent .='С уважением, <br> Команда Krymking.ru';
-
-            $message2 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/'. get_template() .'/back/mail_template.php';
-
-            $message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
-            $message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
-            $message = str_replace('<<LASTNAME>>', $author->last_name, $message2);
-
+	$fieldDates = get_field('free_dates', $_POST['post_id']);
+	$minimumBooking = get_field('minimum_booking', $_POST['post_id'])['value'];
+	$countsGuests = get_field('guests_count', $_POST['post_id']);
+	$countBooking = days($_POST['check_in'], $_POST['check_out']);
+	
+	if ( $fieldDates ) {
+		
+		$dates = [];
+		
+		foreach ($fieldDates as $date) {
+			
+			$interval_date = date_diff(date_create($date['date_from']), date_create($date['date_to']))->days+1;
+			
+			for($i = 1; $i <= $interval_date ; $i++){
+				
+				$dates[] = date('d.m.Y',(strtotime($date['date_from'])+86400*($i-1)));
+				
+			}
+			
 		}
-
-        if(!wp_mail($author->user_email, $subject, $message, $headers)){
-
-            wp_mail($author->user_email, $subject, $message, $headers);
-
-        }
-
+		
+		if(in_array($_POST['check_in'], $dates, false) || in_array($_POST['check_out'], $dates,false)){
+			$messageError = 'Вы не можете забронировать это жилье на выбранный период, т.к. оно на этот период занято.
+			                     Посмотрите, пожалуйста, свободные даты в календаре бронирования ';
+		}
+		
 	}
-
-
-	if($_POST['send'] == 'payment') {
-
-        $days = days($_POST['check_in'], $_POST['check_out']);
-        $price = the_price($_POST['post_id']);
-
-        $prepay = calc_percent(price_total($price, $days));//стоимость с днями
-        $prepay_kope = $prepay * 100;//стоимость в копейках
-		
-		$fieldDates = get_field('free_dates', $_POST['post_id']);
-		$minimumBooking = get_field('minimum_booking', $_POST['post_id'])['value'];
-		$countsGuests = get_field('guests_count', $_POST['post_id']);
-		$countBooking = days($_POST['check_in'], $_POST['check_out']);
-		
-		if ( $fieldDates ) {
+	
+	if($countBooking < $minimumBooking){
+		$messageError = 'Вы не можете забронировать это жилье на выбранный период, т.к. минимальный период проживания в нем — ' . $minimumBooking * 1 .
+				' количество суток. Увеличьте период проживания до необходимого минимального кол-ва суток ';
+	}
+	if($countsGuests < ($_POST['adults'] + $_POST['children'])){
+		$messageError = 'Вы не можете забронировать это жилье, т.к. в нем возможно проживание не более - '. $countsGuests .' человек.
+							 Посмотрите, пожалуйста, другие объекты на нашем сайте';
+	}
+	if(!$_POST['post_id']){
+		$messageError = 'Вы не можете продолжить бронирование или оплату т.к. попали на эту страницу случайно';
+	}
+	
+	if(!$messageError){
+		if(empty($_GET['booking-id'])){
 			
-			$dates = [];
+			$start1 = microtime(true);
 			
-			foreach ($fieldDates as $date) {
+			if(get_field('fast_booking', $_POST['post_id']) == 'Включить'){
+				$status = 'confirmed';
+			}
+			else{
+				$status = 'request';
+			}
+			
+			$post_id = wp_insert_post(wp_slash(array ('post_status' => $status, 'post_type' => 'orders', 'post_title' => 'Бронирование №' . SecondLastPostId(), 'post_content' => '', 'post_author' => get_post($_POST['post_id'])->post_author, 'ping_status' => get_option('default_ping_status'), 'meta_input' => ['meta_key' => 'meta_value'],)));
+			
+			if(is_wp_error($post_id)){
 				
-				$interval_date = date_diff(date_create($date['date_from']), date_create($date['date_to']))->days+1;
+				$result['error'] = 'success';
+				$result['message'] = $post_id->get_error_message();
+			}
+			else{
 				
-				for($i = 1; $i <= $interval_date ; $i++){
-					
-					$dates[] = date('d.m.Y',(strtotime($date['date_from'])+86400*($i-1)));
-					
-				}
+				$result['status'] = 'success';
+				$result['message'] = 'Бронирование № ' . SecondLastPostId();
+				
+				update_field('check_in', $_POST['check_in'], $post_id);
+				update_field('check_out', $_POST['check_out'], $post_id);
+				update_field('guests', $_POST['guests'], $post_id);
+				update_field('comment', $_POST['comment'], $post_id);
+				update_field('apartment', $_POST['post_id'], $post_id);
+				update_field('time_arrival', $_POST['time_arrival'], $post_id);
+				
+				$user = get_user_by('email', $_POST['user_email']);
+				$user_id = $user->ID;
+				
+				update_field('customer', $user_id, $post_id);
+				update_field('booking_status', '1', $post_id);
+				
+				update_field('user_name', $_POST['user_name'], $post_id);
+				update_field('user_lastname', $_POST['user_lastname'], $post_id);
+				update_field('user_email', $_POST['user_email'], $post_id);
+				update_field('user_phone', $_POST['phone'], $post_id);
+				update_field('main_guest', $_POST['main_guest'], $post_id);
 				
 			}
 			
-		} else {
+			$post = get_post($_POST['post_id']);
+			$author = get_userdata($post->post_author);
 			
-			$flag = false;
+			// Письмо владельцу
+			if(get_field('fast_booking', $post->ID) == 'Включить'){
+				
+				// Мгновенное бронирование
+				$headers = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
+				$subject = 'Бронирования объекта на сайте Krymking.ru';
+				
+				$messageContent = 'Поздравляем, Ваш объект жилья id-номер ' . $post->ID . ' забронирован Гостем. ';
+				$messageContent .= 'Для получения детальной информации перейдите в <a href="' . home_url("/profile/") . '">Личный кабинет</a>. ';
+				$messageContent .= 'Напоминаем, что Вы можете обмениваться сообщениями со своими гостями на сайте Krymking.ru.';
+				$messageContent .= '<br>';
+				$messageContent .= '<br>';
+				$messageContent .= 'Зарабатывайте с удовольствием!';
+				$messageContent .= '<br>';
+				$messageContent .= 'С уважением, <br> Команда Krymking.ru';
+				
+				$message2 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/' . get_template() . '/back/mail_template.php';
+				
+				$message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
+				$message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
+				$message = str_replace('<<LASTNAME>>', $author->last_name, $message2);
+				
+				
+			}
+			else{
+				
+				// Без мгновенного бронирования
+				$headers = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
+				$subject = 'Бронирования объекта на сайте Krymking.ru';
+				
+				$messageContent = 'По Вашему объекту жилья id-номер ' . $post->ID . ' пришел запрос на бронирование. ';
+				$messageContent .= 'Для получения детальной информации перейдите в <a href="' . home_url("/profile/orders/") . '">Личный кабинет</a>. ';
+				$messageContent .= '<br>';
+				$messageContent .= '<br>';
+				$messageContent .= 'С уважением, <br> Команда Krymking.ru';
+				
+				$message2 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/' . get_template() . '/back/mail_template.php';
+				
+				$message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
+				$message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
+				$message = str_replace('<<LASTNAME>>', $author->last_name, $message2);
+				
+			}
 			
-			if(!empty($post_id)){
+			if(!wp_mail($author->user_email, $subject, $message, $headers)){
 				
-				$result = filters(true);
-				
-				foreach($result as $res){
-					if($res->ID === $_POST['post_id']){
-						$flag = true;
-						break;
-					}
-				}
-				
-			}else{
-				
-				$flag = true;
+				wp_mail($author->user_email, $subject, $message, $headers);
 				
 			}
 			
 		}
 		
-		if($flag){
+		if($_POST['send'] == 'payment'){
 			
-			$date_start = wp_date( 'j F Y', strtotime($_POST['check_in']) );
-			$date_end = wp_date( 'j F Y', strtotime($_POST['check_out']) );
+			$days = days($_POST['check_in'], $_POST['check_out']);
+			$price = the_price($_POST['post_id']);
 			
-			$message = 'Оплата бронирования на сайте Krymking.ru: бронь №'.$post_id.', ';
-			$message .= ''.address($_POST['post_id']).', ';
-			$message .= 'заезд '.$date_start.' г., выезд '.$date_end.' г. Сумма к оплате '.$prepay.' рублей.';
+			$prepay = calc_percent(price_total($price, $days));//стоимость с днями
+			$prepay_kope = $prepay * 100;//стоимость в копейках
+			
+			$date_start = wp_date('j F Y', strtotime($_POST['check_in']));
+			$date_end = wp_date('j F Y', strtotime($_POST['check_out']));
+			
+			$message = 'Оплата бронирования на сайте Krymking.ru: бронь №' . $post_id . ', ';
+			$message .= '' . address($_POST['post_id']) . ', ';
+			$message .= 'заезд ' . $date_start . ' г., выезд ' . $date_end . ' г. Сумма к оплате ' . $prepay . ' рублей.';
 			
 			//https://www.tinkoff.ru/kassa/develop/api/payments/init-description/ - апи на тинькове
 			$arr['TerminalKey'] = "TinkoffBankTest";
@@ -279,152 +268,102 @@ if (!empty($_POST['send'])) {
 			$phone = '89179990000';
 			
 			
-			$receiptItem = [[
-					'Name'          => 'product1',
-					'Price'         => $prepay_kope,
-					'Quantity'      => 1,
-					'Amount'        => $prepay_kope,
-					'PaymentMethod' => 'advance',
-					'PaymentObject' => 'service',
-					'Tax'           => 'none'
-			]];
+			$receiptItem = [['Name' => 'product1', 'Price' => $prepay_kope, 'Quantity' => 1, 'Amount' => $prepay_kope, 'PaymentMethod' => 'advance', 'PaymentObject' => 'service', 'Tax' => 'none']];
 			
 			$isShipping = false;
 			
-			if (!empty($isShipping[2]['Name'] === 'shipping')) {
+			if(!empty($isShipping[2]['Name'] === 'shipping')){
 				$isShipping = true;
 			}
 			
 			$enabledTaxation = true;
 			
-			$receipt = [
-					'EmailCompany' => "contact@krymking.ru",
-					'Email'        => $_POST['user_email'],
-					'Taxation'     => "usn_income_outcome",
-					'Items'        => balanceAmount($isShipping, $receiptItem, $prepay_kope),
-			];
+			$receipt = ['EmailCompany' => "contact@krymking.ru", 'Email' => $_POST['user_email'], 'Taxation' => "usn_income_outcome", 'Items' => balanceAmount($isShipping, $receiptItem, $prepay_kope),];
 			
 			
-			$params = [
-					'OrderId' => $post_id,
-					'Amount'  => $prepay_kope,
-					'DATA'    => [
-							'Email'           => $_POST['user_email'],
-							'Connection_type' => 'example'
-					],
-			];
+			$params = ['OrderId' => $post_id, 'Amount' => $prepay_kope, 'DATA' => ['Email' => $_POST['user_email'], 'Connection_type' => 'example'],];
 			
-			if ($enabledTaxation) {
+			if($enabledTaxation){
 				$params['Receipt'] = $receipt;
 			}
 			
 			$api->init($params);
 			
-			
-			
 			header('Location:' . $api->paymentUrl);
 			
 			
-			
-			
 			/*
-					$mrh_pass1 = "zV395RuabF6HbqbmWRJ3";
-			
-					$days = days($_POST['check_in'], $_POST['check_out']);
-					$price = the_price($_POST['post_id']);
-					$prepay = calc_percent(price_total($price, $days));
-			
-					$date_start = wp_date( 'j F Y', strtotime($_POST['check_in']) );
-					$date_end = wp_date( 'j F Y', strtotime($_POST['check_out']) );
-			
-					$message = 'Оплата бронирования на сайте Krymking.ru: бронь №'.$post_id.', ';
-					$message .= ''.address($_POST['post_id']).', ';
-					$message .= 'заезд '.$date_start.' г., выезд '.$date_end.' г. Сумма к оплате '.$prepay.' рублей.';
-			
-					$params = array(
-						'MerchantLogin' => 'krymking.ru', // Идентификатор магазина
-						'InvId'         => $post_id, // ID заказа
-						'Description'   => $message, // Описание заказа (мах 100 символов)
-						'OutSum'        => $prepay, // Сумма заказа
-						'Culture'       => 'ru',
-						'Email'			=> $_POST['user_email'],
-						'Encoding'      => 'utf-8',
-						'IsTest'        => 1, // Тестовый режим
-					);
-			
-					// Формирование подписи
-					$params['SignatureValue'] = md5("{$params['MerchantLogin']}:{$params['OutSum']}:{$params['InvId']}:{$mrh_pass1}");
-			
-					// Перенаправляем пользователя на страницу оплаты
-					header('Location: https://auth.robokassa.ru/Merchant/Index.aspx?' . urldecode(http_build_query($params)));
+				$mrh_pass1 = "zV395RuabF6HbqbmWRJ3";
+		
+				$days = days($_POST['check_in'], $_POST['check_out']);
+				$price = the_price($_POST['post_id']);
+				$prepay = calc_percent(price_total($price, $days));
+		
+				$date_start = wp_date( 'j F Y', strtotime($_POST['check_in']) );
+				$date_end = wp_date( 'j F Y', strtotime($_POST['check_out']) );
+		
+				$message = 'Оплата бронирования на сайте Krymking.ru: бронь №'.$post_id.', ';
+				$message .= ''.address($_POST['post_id']).', ';
+				$message .= 'заезд '.$date_start.' г., выезд '.$date_end.' г. Сумма к оплате '.$prepay.' рублей.';
+		
+				$params = array(
+					'MerchantLogin' => 'krymking.ru', // Идентификатор магазина
+					'InvId'         => $post_id, // ID заказа
+					'Description'   => $message, // Описание заказа (мах 100 символов)
+					'OutSum'        => $prepay, // Сумма заказа
+					'Culture'       => 'ru',
+					'Email'			=> $_POST['user_email'],
+					'Encoding'      => 'utf-8',
+					'IsTest'        => 1, // Тестовый режим
+				);
+		
+				// Формирование подписи
+				$params['SignatureValue'] = md5("{$params['MerchantLogin']}:{$params['OutSum']}:{$params['InvId']}:{$mrh_pass1}");
+		
+				// Перенаправляем пользователя на страницу оплаты
+				header('Location: https://auth.robokassa.ru/Merchant/Index.aspx?' . urldecode(http_build_query($params)));
 			*/
+		}
+		elseif($_POST['send'] == 'request'){
+			// Перенаправляем пользователя на страницу запроса
 			
-			/*$_SESSION['post_id'] = $_POST['post_id'];
-			$_SESSION['check_in'] = $_POST['check_in'];
-			$_SESSION['check_out'] = $_POST['check_out'];
+			// Письмо гостю
+			$user = get_userdata(get_field('customer', $post_id));
+			$post2 = get_field('apartment', $post_id);
 			
-			$_SESSION['adults'] = $_POST['adults'];
-			$_SESSION['children'] = $_POST['children'];
-			$_SESSION['babies'] = $_POST['babies'];
+			$headers2 = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
+			$subject2 = 'Запрос на бронирование объекта';
 			
-			$_SESSION['counts_guests'] = $_POST['counts_guests'];*/
-		}else{
 			
-			if(in_array($_POST['check_in'], $dates, false) || in_array($_POST['check_out'], $dates,false)){
-				echo 'Вы не можете забронировать это жилье на выбранный период, т.к. оно на этот период занято. Посмотрите, пожалуйста, свободные даты в Календаре бронирования ';
+			$messageContent = 'Вы запросили бронирование №' . $post_id . ' объекта жилья <a href="' . get_permalink($post2) . '">' . get_permalink($post2) . '</a>. ';
+			$messageContent .= 'Информация отправлена Владельцу. Вы будете уведомлены о его ответе при помощи электронной почты. ';
+			$messageContent .= 'При подтверждении дат бронирования Владельцем Вам останется только внести предоплату на сайте, получить ваучер и планировать свое путешествие.';
+			$messageContent .= '<br>';
+			$messageContent .= '<br>';
+			$messageContent .= 'С уважением, <br> Команда Krymking.ru';
+			
+			
+			global $current_user;
+			$email_to = $current_user->user_email;
+			
+			$message3 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/' . get_template() . '/back/mail_template.php';
+			
+			$message3 = str_replace('<<MAILCONTENT>>', $messageContent, $message3);
+			$message3 = str_replace('<<FIRSTNAME>>', $user->first_name, $message3);
+			$message = str_replace('<<LASTNAME>>', $user->last_name, $message3);
+			
+			if(!wp_mail($email_to, $subject2, $message, $headers2)){
+				
+				wp_mail($email_to, $subject2, $message, $headers2, '');
+				
 			}
-			if($countBooking < $minimumBooking){
-				echo 'Вы не можете забронировать это жилье на выбранный период, т.к. минимальный период проживания в нем — ' . $minimumBooking * 1 .
-						' количество суток. Увеличьте период проживания до необходимого минимального кол-ва суток ';
-			}
-			if($countsGuests < ($_POST['adults'] + $_POST['children'])){
-				echo 'Вы не можете забронировать это жилье, т.к. в нем возможно проживание не более - '. $countsGuests .' человек. Посмотрите, пожалуйста, другие объекты на нашем сайте';
-			}
-			if(!$post_id){
-				echo 'Вы не можете продолжить бронирование или оплату т.к. попали на эту страницу случайно';
-			}
+			
+			wp_redirect(home_url('/request/?order-id=' . $post_id . ''));
 			
 		}
-  
-	} elseif ($_POST['send'] == 'request') {
-		// Перенаправляем пользователя на страницу запроса
-
-		// Письмо гостю
-		$user = get_userdata(get_field('customer', $post_id));
-		$post2 = get_field('apartment', $post_id);
-	
-		$headers2 = 'Content-type: text/html; charset=utf-8'."\r\n".'From: Krymking <info@krymking.ru>';
-		$subject2 = 'Запрос на бронирование объекта';
-
-
-        $messageContent = 'Вы запросили бронирование №'.$post_id.' объекта жилья <a href="'.get_permalink($post2).'">'.get_permalink($post2).'</a>. ';
-        $messageContent .= 'Информация отправлена Владельцу. Вы будете уведомлены о его ответе при помощи электронной почты. ';
-        $messageContent .= 'При подтверждении дат бронирования Владельцем Вам останется только внести предоплату на сайте, получить ваучер и планировать свое путешествие.';
-        $messageContent .='<br>';
-        $messageContent .='<br>';
-        $messageContent .='С уважением, <br> Команда Krymking.ru';
-	
-
-		global $current_user;
-		$email_to = $current_user->user_email;
-
-		$message3 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/'. get_template() .'/back/mail_template.php';
-
-		$message3 = str_replace('<<MAILCONTENT>>', $messageContent, $message3);
-		$message3 = str_replace('<<FIRSTNAME>>', $user->first_name, $message3);
-		$message = str_replace('<<LASTNAME>>', $user->last_name, $message3);
-
-		if(!wp_mail($email_to, $subject2, $message, $headers2)){
-
-            wp_mail($email_to, $subject2, $message, $headers2, '');
-
-        }
-
-		wp_redirect( home_url('/request/?order-id='.$post_id.'') ); 
+		
 	}
-
-
-
+	
 }
 
 get_header();
@@ -442,6 +381,7 @@ get_header();
 	<? } else { ?>
 
 		<h1 class="page-title">Завершение бронирования и оплата</h1>
+		<?php if(!empty($messageError)) echo '<div class="success-text" style="color: brown">'. $messageError .'</div>'?>
 		<div class="booking-number">Бронь № 
 			<?if ($_GET['booking-id']) {?>
 				<?=$_GET['booking-id'];?>
@@ -454,7 +394,7 @@ get_header();
 				<div class="booking-title"><a href="<?=get_permalink($booking_id);?>"><?=get_the_title($booking_id);?></a></div>
 				<div class="booking-thumbnail">
 					<div class="booking-gallery">
-					<?foreach (get_field('gallery', $booking_id) as $image) {?>
+					<?foreach (get_field('gallery', $booking_id = $booking_id ? : $_POST['post_id']) as $image) {?>
 						<a href="<?=$image['url'];?>" data-fancybox="gallery">
 							<img src="<?=$image['sizes']['large'];?>">
 						</a>
@@ -479,8 +419,8 @@ get_header();
 				<div class="booking-guests flexbox">Общая длительность проживания <span><?=num_word($days, array("сутки","суток","суток") );?></span></div>
 				<div class="booking-guests flexbox">Количество гостей <span><?=guests();?></span></div>
 				<ul class="booking-details">
-					<li><strong>Итого за <?=$days;?> суток:</strong> <strong><?=price_total($price, $days);?> RUB</strong></li>
-					<li class="payment-calc"><span><?=$price;?> RUB * <?=$days;?> суток</span> <span><?=price_total($price, $days);?> RUB</span></li>
+					<li><strong>Итого за <?=$days;?> суток:</strong> <strong><?=price_total($price = $price ?: the_price($_POST['post_id']), $days);?> RUB</strong></li>
+					<li class="payment-calc"><span><?=$price = $price ?: the_price($_POST['post_id']);?> RUB * <?=$days;?> суток</span> <span><?=price_total($price = $price ?: the_price($_POST['post_id']), $days);?> RUB</span></li>
 				</ul>
 				<div class="btn-calc">Скрыть расчёт</div>
 		 		<ul class="booking-details">
@@ -613,7 +553,7 @@ get_header();
 					, Вы соглашаетесь с <span>Правилами проживания</span> и <a href="/gostyam/pravila-otmeny-bronirovaniya/" target="_blank">Правилами отмены бронирования</a></span>
 				</div>
 				<div class="input-group">
-				
+					
 					<? if(get_field('fast_booking', $booking_id) == 'Включить' || get_post_status( $_GET['booking-id'] ) == 'confirmed') { ?>
 						<button type="submit" class="btn btn-submit">Внести предоплату</button>
 						<input type="hidden" name="send" value="payment">

@@ -278,7 +278,7 @@ get_header();
 	<?php if (function_exists('dimox_breadcrumbs')) dimox_breadcrumbs(); ?>
 	<h1 class="page-title"><?=the_title()?></h1>
 
-<? if ( !empty($inv_id) ) {
+<?php if ( !empty($inv_id) ) {
 
 	echo '<div class="success-text">Благодарим за бронирование на Крымкинг.ру! После подтверждения оплаты на Ваш электронный адрес будет отправлен Ваучер на заселение с контактной информацией о Владельце и забронированном жилье.  Откройте электронное письмо от Krymking.ru с Ваучером и сохраните или распечатайте его.</div>';
 

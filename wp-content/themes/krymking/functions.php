@@ -1433,15 +1433,16 @@ function data_param() {
 
             $interval_date = date_diff(date_create($date['date_from']), date_create($date['date_to']))->days+1;
 
-            for($i = 1; $i <= $interval_date ; $i++){
+            for($i = 1; $i <= $interval_date; $i++){
 
                 $dates[] = date('d.m.Y',(strtotime($date['date_from'])+86400*($i-1)));
 
             }
 
         }
-
+		
     } else {
+    	
 	    $flag = false;
 	
 	    if(!empty($post_id)){
@@ -2975,7 +2976,10 @@ function booking_canceled() {
 add_action('wp_ajax_nopriv_booking_canceled','booking_canceled');
 add_action('wp_ajax_booking_canceled','booking_canceled');
 
-function travel_cancel() { 
+function travel_cancel() {
+	
+	global $wpdb;
+	
 	$booking_id = $_POST['post_id'];
 
 	$update_post = array(
@@ -2984,6 +2988,52 @@ function travel_cancel() {
 		'post_status' => 'canceled'
 	);
 	
+	$dateBooking = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $booking_id");
+	
+	if($dateBooking){
+		
+		foreach($dateBooking as $key => $item){
+			
+			if($item->meta_key == 'check_in'){
+				$chekIn = $item->meta_value;
+			}
+			if($item->meta_key == 'check_out'){
+				$chekOut = $item->meta_value;
+			}
+			if($item->meta_key == 'apartment'){
+				$postId = $item->meta_value;
+			}
+			
+		}
+		
+		$fieldFrom = (new DateTime($chekIn))->format('Ymd');
+		$fieldTo = (new DateTime($chekOut))->format('Ymd');
+		
+		$fieldFrom = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_value = '$fieldFrom' AND meta_key LIKE 'free_dates%'")[0];
+		$fieldTo = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_value = '$fieldTo' AND meta_key LIKE 'free_dates%'")[0];
+		$allDatesRows = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_key = 'free_dates'")[0];
+		$keyFrom = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_key = '_$fieldFrom->meta_key'")[0];
+		$keyTo = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_key = '_$fieldTo->meta_key'")[0];
+		
+		$deleteArr = [
+				$keyFrom->meta_id,
+				$keyTo->meta_id,
+				$fieldFrom->meta_id,
+				$fieldTo->meta_id
+		];
+		
+		if(!empty($deleteArr)){
+			foreach($deleteArr as $del){
+				$res = $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = '$postId' AND meta_id = '$del'");
+			}
+		}
+		if($res){
+			$wpdb->query("UPDATE wp_postmeta SET meta_value = $allDatesRows->meta_value - 1 WHERE post_id = '$postId' AND meta_key = 'free_dates'");
+		}
+		
+	}
+	
+	//exit;
 	wp_update_post($update_post);
 	
 	// Письмо владельцу

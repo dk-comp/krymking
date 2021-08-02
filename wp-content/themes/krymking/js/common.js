@@ -1620,8 +1620,8 @@ jQuery(document).ready(function ($) {
 
 		data_param(function(res, elem, room, buttonSendPay){
 
-			console.log(res)
-			return false
+			/*console.log(res)
+			return false*/
 			if(!res){
 
 				//$('.input-group .btn-submit').click();

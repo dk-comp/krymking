@@ -10,7 +10,7 @@ $out_sum = @$_POST['OutSum'];
 $crc     = strtoupper(@$_POST['SignatureValue']);
 */
 $inv_id  = intval(@$_GET['OrderId']);
-$out_sum = @$_POST['Amount']/100;
+$out_sum = @$_GET['Amount']/100;
 
 
 

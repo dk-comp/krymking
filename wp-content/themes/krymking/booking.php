@@ -176,7 +176,7 @@ if (!empty($_POST['send'])) {
 			if(get_field('fast_booking', $post->ID) == 'Включить'){
 				
 				// Мгновенное бронирование
-				$headers = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
+				/*$headers = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
 				$subject = 'Бронирования объекта на сайте Krymking.ru';
 				
 				$messageContent = 'Поздравляем, Ваш объект жилья id-номер ' . $post->ID . ' забронирован Гостем. ';
@@ -192,7 +192,22 @@ if (!empty($_POST['send'])) {
 				
 				$message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
 				$message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
-				$message = str_replace('<<LASTNAME>>', $author->last_name, $message2);
+				$message = str_replace('<<LASTNAME>>', $author->last_name, $message2);*/
+
+                $headers = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
+                $subject = 'Бронирования объекта на сайте Krymking.ru';
+
+                $messageContent = 'По Вашему объекту жилья id-номер ' . $post->ID . ' пришел запрос на бронирование. ';
+                $messageContent .= 'Для получения детальной информации перейдите в <a href="' . home_url("/profile/orders/") . '">Личный кабинет</a>. ';
+                $messageContent .= '<br>';
+                $messageContent .= '<br>';
+                $messageContent .= 'С уважением, <br> Команда Krymking.ru';
+
+                $message2 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/' . get_template() . '/back/mail_template.php';
+
+                $message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
+                $message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
+                $message = str_replace('<<LASTNAME>>', $author->last_name, $message2);
 				
 				
 			}

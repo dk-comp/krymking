@@ -21,7 +21,18 @@ $statuses = array(
 
 <div class="object-item">
 	<div class="object-image">
-		<a href="<?=get_permalink();?>"><?=the_post_thumbnail(array(200, 200));?></a>
+		<?php
+			$terms = get_the_terms(get_field('select_hotel')->ID, 'type' );
+			if ( $terms ) {
+				$term = array_shift( $terms );
+			}
+			if ( $term->term_id == 85 || $term->term_id == 86 || $term->term_id == 87 ) {
+				$no_link = true;
+			}else{
+				$no_link = false;
+			}
+		?>
+		<a href="<?php if(!$no_link) {echo get_permalink();} else {echo '#';}?>"><?=the_post_thumbnail(array(200, 200));?></a>
 	</div>
 	<div class="object-content">
 		<div class="rating-wrap">
@@ -29,7 +40,7 @@ $statuses = array(
 			<div class="rating-text"><?=rating(get_field('guest_rating'), 'text');?></div>
 			<div class="reviews"><?=num_word( get_comments_number(), array("отзыв","отзыва","отзывов") ); ?></div>
 		</div>
-		<a href="<?=get_permalink();?>" class="object-title"><?=the_title();?></a>
+		<a href="<?php  if(!$no_link) {echo get_permalink();} else {echo '#';}?>" class="object-title"><?=the_title();?></a>
 		<div class="object-id">ID: <?=get_the_ID();?></div>
 
 		<div class="df">
@@ -67,5 +78,6 @@ $statuses = array(
 			<div class="views-text">за сегодня <span>0</span></div>
 			<div class="views-text">за все время <span>0</span></div>
 		</div> -->
+		<?php /*$a=1;*/?>
 	</div>
 </div>

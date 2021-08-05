@@ -34,8 +34,8 @@ function sms_register() {
 		$result['message'] = 'Этот E-mail уже зарегистрирован!';
 
 	} else {
-
-		$api_id = "C4594B2C-15E6-A1B5-B5E9-8A821C59A03E";
+		
+		$api_id = "C6428F73-C358-CB81-C1F8-9A95A4607CBD";
 		
 		if ($_POST["submit"] == 'sendsms') {
 			function generate_pass($number) {

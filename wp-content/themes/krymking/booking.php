@@ -11,8 +11,8 @@ include 'TinkoffMerchantAPI.php';
 
 //spl_autoload('TinkoffMerchantAPI');
 $api = new TinkoffMerchantAPI(
-    '1618915637197DEMO',  //Ваш Terminal_Key
-    'ptlarl9mfnwe9kh9'   //Ваш Secret_Key
+		'1618915637197',  //Ваш Terminal_Key
+		'vdvq11p59pyithbm'   //Ваш Secret_Key
 );
 
 

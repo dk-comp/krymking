@@ -32,7 +32,7 @@
 			</div>
 			<div class="popup-item auth-phone">
 				<h4>С помощью  телефона</h4>
-				<form action="#" method="POST">
+				<form action="auth_phone" method="POST">
 					<input type="hidden" name="action" value="auth_phone">
 					<div class="flexbox">
 						<div class="input-group">

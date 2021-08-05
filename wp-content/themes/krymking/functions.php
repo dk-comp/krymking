@@ -2564,7 +2564,7 @@ function filter_type() {
             ),
         ),
 	);
-	$a= query_posts( $args );
+	query_posts( $args );
 	if(have_posts()) {
 		while ( have_posts() ) {
 			the_post(); ?>
@@ -2573,7 +2573,7 @@ function filter_type() {
 	} else {
 		echo 'Ничего не найдено!';
 	}
-	//wp_reset_postdata();
+	wp_reset_postdata();
 
 	exit;
 }

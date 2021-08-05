@@ -173,26 +173,7 @@ if (!empty($_POST['send'])) {
 			$author = get_userdata($post->post_author);
 			
 			// Письмо владельцу
-			if(get_field('fast_booking', $post->ID) == 'Включить'){
-				
-				// Мгновенное бронирование
-				/*$headers = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
-				$subject = 'Бронирования объекта на сайте Krymking.ru';
-				
-				$messageContent = 'Поздравляем, Ваш объект жилья id-номер ' . $post->ID . ' забронирован Гостем. ';
-				$messageContent .= 'Для получения детальной информации перейдите в <a href="' . home_url("/profile/") . '">Личный кабинет</a>. ';
-				$messageContent .= 'Напоминаем, что Вы можете обмениваться сообщениями со своими гостями на сайте Krymking.ru.';
-				$messageContent .= '<br>';
-				$messageContent .= '<br>';
-				$messageContent .= 'Зарабатывайте с удовольствием!';
-				$messageContent .= '<br>';
-				$messageContent .= 'С уважением, <br> Команда Krymking.ru';
-				
-				$message2 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/' . get_template() . '/back/mail_template.php';
-				
-				$message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
-				$message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
-				$message = str_replace('<<LASTNAME>>', $author->last_name, $message2);*/
+			/*if(get_field('fast_booking', $post->ID) == 'Включить'){
 
                 $headers = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
                 $subject = 'Бронирования объекта на сайте Krymking.ru';
@@ -235,7 +216,7 @@ if (!empty($_POST['send'])) {
 				
 				wp_mail($author->user_email, $subject, $message, $headers);
 				
-			}
+			}*/
 			
 		}
 		

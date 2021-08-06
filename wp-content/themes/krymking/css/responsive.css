@@ -376,6 +376,10 @@
 		width: 100%;
 	}
 
+    .ui-datepicker-multi {
+        width: 80% !important;
+    }
+
 }
 
 @media all and (max-width: 768px) {
@@ -536,7 +540,7 @@
     }
 
     .ui-datepicker.ui-datepicker-multi {
-        width: auto !important;
+        width: 80% !important;
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;

@@ -197,7 +197,7 @@ $postid = $post->ID;
 			</ul>
 		</div>
 
-		<div class="room-parameters">
+		<div class="room-parameters mob_picker">
 			<?=free_calendar($post->ID);?>
 		</div>
 

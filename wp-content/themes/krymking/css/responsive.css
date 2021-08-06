@@ -383,6 +383,9 @@
 }
 
 @media all and (max-width: 768px) {
+    .mob_picker {
+        display: none;
+    }
     .main-screen {
         padding-top: 200px;
         height: auto;

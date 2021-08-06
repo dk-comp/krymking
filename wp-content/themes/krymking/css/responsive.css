@@ -936,6 +936,13 @@
 	}
 }
 
+@media all and (max-width: 390px) {
+    .ui-datepicker-multi .ui-datepicker-group table, .ui-datepicker .ui-datepicker-group table {
+        transform: scale(0.8);
+        margin-left: -23px;
+    }
+}
+
 @media all and (max-width: 375px) {
     header .btn {
         padding: 10px !important;

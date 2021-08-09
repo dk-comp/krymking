@@ -241,7 +241,8 @@ $service[] = get_field_object('field_60092180474db', $post_id); // Парков�
 			 		<div class="review-item">
 			 			<div class="review-head">
 			 				<div class="review-avatar avatar">
-			 					<?=get_avatar( $comment, 44, '', '', array( 'class' => 'comment-avatar' ) );?>
+			 					<!-- get_avatar( $comment, 44, '', '', array( 'class' => 'comment-avatar' )) -->
+								<img alt="" src="https://secure.gravatar.com/avatar/07ca12367fde7404e51c82f2cc0bf2ee?s=44&amp;d=mm&amp;r=g" srcset="https://secure.gravatar.com/avatar/07ca12367fde7404e51c82f2cc0bf2ee?s=88&amp;d=mm&amp;r=g 2x" class="avatar avatar-44 photo comment-avatar" height="44" width="44" loading="lazy">
 			 				</div>
 			 				<div class="review-content">
 			 					<div class="reviewer"><?=$comment->comment_author;?></div>

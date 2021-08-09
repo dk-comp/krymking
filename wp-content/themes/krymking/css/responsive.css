@@ -944,6 +944,9 @@
         transform: scale(0.8);
         margin-left: -23px;
     }
+    .room-parameters .attributes-line.attributes-flex li {
+        width: 99%;
+    }
 }
 
 @media all and (max-width: 375px) {

@@ -48,6 +48,11 @@
 					<a href="<?=the_field('viber', 'options');?>" class="viber" target="_blank" rel="nofollow"></a>
 					<a href="<?=the_field('whatsapp', 'options');?>" class="whatsapp" target="_blank" rel="nofollow"></a>
 				</div>
+				<div class="oweb">
+					<a href="https://www.oweb-solutions.ru/">
+						<img src="<?=get_template_directory_uri();?>/images/oweb.jpg" alt="oweb solutions">
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -173,7 +173,7 @@ if (!empty($_POST['send'])) {
 			$author = get_userdata($post->post_author);
 			
 			// Письмо владельцу
-			/*if(get_field('fast_booking', $post->ID) == 'Включить'){
+			if(get_field('fast_booking', $post->ID) == 'Включить'){
 
                 $headers = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
                 $subject = 'Бронирования объекта на сайте Krymking.ru';
@@ -189,8 +189,7 @@ if (!empty($_POST['send'])) {
                 $message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
                 $message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
                 $message = str_replace('<<LASTNAME>>', $author->last_name, $message2);
-				
-				
+                
 			}
 			else{
 				
@@ -216,7 +215,7 @@ if (!empty($_POST['send'])) {
 				
 				wp_mail($author->user_email, $subject, $message, $headers);
 				
-			}*/
+			}
 			
 		}
 		

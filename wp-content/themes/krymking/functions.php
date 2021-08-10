@@ -1824,7 +1824,7 @@ function pricePeriod($postid) { ?>
 function dates_free($postid) { ?>
 <div class="booking-calendar free-dates"></div>
 <?
-	
+	$res = get_field('free_dates', $postid);
 	if ( get_field('free_dates', $postid) ) {
 		
 		$dates = [];
@@ -2004,10 +2004,10 @@ function freeDates() {
 	$field_key_to = 'field_60643922b477e';
 
 	$row = [];
+
+    $result = [];
  
 	if ($fields) {
-		
-		$result = [];
 		
 		if(!empty($fields)){
 			
@@ -2037,46 +2037,48 @@ function freeDates() {
 			}
 			
 		}
-		
-		usort($dates, function($a, $b){
-			
-			$date1 = new DateTime($a);
-			
-			$date2 = new DateTime($b);
-			
-			if($date1 == $date2) return 0;
-			
-			return $date1 < $date2 ? -1 : 1;
-			
-		});
-		
-		$counter = 0;
-		
-		foreach ($dates as $key => $item){
-			
-			if(!isset($result[$counter])) $result[$counter]['date_from'] = $item;
-			
-			if(isset($dates[$key + 1])){
-				
-				if((new DateTime($item))->modify('+1 day') != (new DateTime($dates[$key + 1]))){
-					
-					$result[$counter]['date_to'] = $item;
-					
-					$counter++;
-					
-				}
-				
-			}else{
-				
-				$result[$counter]['date_to'] = $item;
-				
-			}
-			
-		}
 
 	}
-	
-	$a=$datesStart;
+
+	if(!empty($dates)){
+
+        usort($dates, function($a, $b){
+
+            $date1 = new DateTime($a);
+
+            $date2 = new DateTime($b);
+
+            if($date1 == $date2) return 0;
+
+            return $date1 < $date2 ? -1 : 1;
+
+        });
+
+        $counter = 0;
+
+        foreach ($dates as $key => $item){
+
+            if(!isset($result[$counter])) $result[$counter]['date_from'] = $item;
+
+            if(isset($dates[$key + 1])){
+
+                if((new DateTime($item))->modify('+1 day') != (new DateTime($dates[$key + 1]))){
+
+                    $result[$counter]['date_to'] = $item;
+
+                    $counter++;
+
+                }
+
+            }else{
+
+                $result[$counter]['date_to'] = $item;
+
+            }
+
+        }
+
+    }
 	
 	// сохраняем значение для повторителя
 	
@@ -2122,12 +2124,8 @@ function freeDates() {
 			}
 			
 		}
-		
-		if($fieldsFrom || $fieldsTo){
-			
-			$wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND meta_key = 'free_dates'");
-			
-		}
+
+        $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND (meta_key = 'free_dates' OR meta_key = '_free_dates')");
 		
 		$type = '_free_dates_0_date_from';
 		
@@ -2151,8 +2149,8 @@ function freeDates() {
 		}
 		
 		$countDates = count($result);
-		
-		$wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, 'free_dates', '$countDates')");
+
+        $wpdb->query("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ($post_id, '_free_dates', '$field_key'), ($post_id, 'free_dates', '$countDates')");
 		
 	}
 	

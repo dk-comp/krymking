@@ -277,7 +277,6 @@ if ($postid) {
 				<div class="calendar-header"></div>
 
 				<div class="ajax ajax-date"><?=dates_free($postid);?></div>
-				<textarea name="multipleDate"></textarea>
 			</div>
 			<!-- <div class="calendar-right">
 				<div class="calendar-item calendar-text">Свяжите календарь своего объекта для синхронизации с календарями этого объекта на других сайтах</div>

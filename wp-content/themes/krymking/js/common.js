@@ -526,6 +526,7 @@ jQuery(document).ready(function ($) {
 		numberOfMonths: 2,
 		minDate: date,
 		onSelect: function(dateText, inst, extensionRange) {
+
 			$('[name=check_in]').val(extensionRange.startDateText);
 			$('[name=check_out]').val(extensionRange.endDateText);
 

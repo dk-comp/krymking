@@ -283,6 +283,8 @@ if (!empty($_POST['send'])) {
 			}
 			
 			$api->init($params);
+
+			$_SESSION['prepayment'] = (string)$prepay_kope;
 			
 			header('Location:' . $api->paymentUrl);
 			

@@ -9,6 +9,15 @@ $inv_id  = intval(@$_POST['InvId']);
 $out_sum = @$_POST['OutSum'];
 $crc     = strtoupper(@$_POST['SignatureValue']);
 */
+
+if(empty($_SESSION['prepayment']) || $_SESSION['prepayment'] !== (string)@$_GET['Amount']){
+
+    exit('Куку охибка');
+
+}
+
+unset($_SESSION['prepayment']);
+
 $inv_id  = intval(@$_GET['OrderId']);
 $out_sum = @$_GET['Amount']/100;
 

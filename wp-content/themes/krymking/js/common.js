@@ -803,35 +803,16 @@ jQuery(document).ready(function ($) {
 	console.log(typeObject)
 	if (typeObject == 85 || typeObject == 86 || typeObject == 87) {*/
 
-		$(document).on('change', '.create-room *', function () {
+		$(document).on('change', '.create-room *', function (e) {
+
 			let data = new FormData();
 
-			var ids = $('.form-control').map(function(i,el){
-				return $(el).attr('id');
-			}).get();
-			console.log(ids)
-			/*let idRowFirst = $('form-control').hasAttribute('#sub-image')[0].files != 'undefined' ? $('#sub-image')[0].files : '';
-			console.log(idRowFirst)
-			let idRowLast = $('form-control').hasAttribute('#pro-image')[0].files != 'undefined' ? $('#pro-image')[0].files : '';*/
 			//Form data
 			let form_data = $('.create-room').serializeArray();
 			$.each(form_data, function (key, input) {
 				data.append(input.name, input.value);
 			});
-			//File data
-			if (ids == 'sub-image'){
-				let file_data = ids;
-				console.log(file_data)
-			}
-			if (ids == 'pro-image'){
-				let ids = $('#pro-image')[0].files;
-				console.log(ids)
 
-				for (var i = 0; i <= ids.length; i++) {
-					data.append("files[]", ids[i]);
-				}
-
-			}
 
 			$.ajax({
 				url: '/wp-admin/admin-ajax.php',
@@ -864,10 +845,23 @@ jQuery(document).ready(function ($) {
 		data.append('publish', '1');	
 		
 		//File data
-		var file_data = $('#sub-image')[0].files;
-		console.log(file_data)
-		for (var i = 0; i <= file_data.length; i++) {
-		    data.append("files[]", file_data[i]);
+
+		var ids = $('.form-control').map(function(i,el){
+			return $(el).attr('id');
+		}).get();
+
+		let fileIdKey = ids.indexOf('sub-image')
+
+		if(fileIdKey === -1) fileIdKey = ids.indexOf('pro-image')
+
+		if(fileIdKey !== -1){
+
+			let files = $(`#${ids[fileIdKey]}`)[0].files;
+
+			for (var i = 0; i <= files.length; i++) {
+				data.append("files[]", files[i]);
+			}
+
 		}
 
 		$.ajax({
@@ -883,7 +877,7 @@ jQuery(document).ready(function ($) {
 					if (result.status == 'success') {
 						$('#link').removeClass('hidden');
 						//alert('Изменения успешно сохранены')
-						MessagePopup(result.message);
+						MessagePopup(result.message, true);
 						$('.btn-add').fadeOut();
 
 					}
@@ -1200,12 +1194,18 @@ jQuery(document).ready(function ($) {
 	});
 
 	// favorite
-	function MessagePopup(text) {
+	function MessagePopup(text, reload = false) {
 		message = '<div class="message-content">';
 		message += text;
 		message += '</div>';
-		$.fancybox.open(message);
-		//setTimeout(() => {location.reload()}, 1500)
+		$.fancybox.open(message, {
+			beforeClose: function(){
+				if(reload){
+					window.location.reload()
+				}
+			}
+		});
+
 	}
 
 	function favorite(th, id){

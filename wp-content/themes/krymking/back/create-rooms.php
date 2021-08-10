@@ -217,17 +217,8 @@ function create_object(){
 		    		}
 			    }
 			}
-			//if(!empty(get_post_thumbnail_id($post_id))){
+			if(!empty(get_post_thumbnail_id($post_id))){
 				set_post_thumbnail($post_id, $photos[0]);
-			//}
-			if($_SESSION['postId'] === $post_id){
-				
-				unset($_SESSION['postId']);
-				
-				/*$serializePhoto = serialize($photos);
-				$res = $wpdb->query("UPDATE wp_postmeta SET meta_value = '$serializePhoto' WHERE post_id = $post_id AND meta_key = 'gallery'");*/
-				update_field('gallery', $photos, $post_id);
-				
 			}
 			
 			if($post_id){
@@ -252,7 +243,11 @@ function create_object(){
 					//$res = $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = $post_id AND meta_key = 'gallery'");
 					$serializePhoto = serialize($del_img);
 					$res = $wpdb->query("UPDATE wp_postmeta SET meta_value = '$serializePhoto' WHERE post_id = $post_id AND meta_key = 'gallery'");
-				}
+				}else{
+
+                    update_field('gallery', $photos, $post_id);
+
+                }
 			}
 			
 		}

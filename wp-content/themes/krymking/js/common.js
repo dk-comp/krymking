@@ -805,7 +805,18 @@ jQuery(document).ready(function ($) {
 
 		$(document).on('change', '.create-room *', function (e) {
 
+
 			let data = new FormData();
+
+			//File data
+
+			if(e.target.type === 'file'){
+
+				for (var i = 0; i <= e.target.files.length; i++) {
+					data.append("files[]", e.target.files[i]);
+				}
+
+			}
 
 			//Form data
 			let form_data = $('.create-room').serializeArray();
@@ -842,27 +853,7 @@ jQuery(document).ready(function ($) {
 		$.each(form_data, function (key, input) {
 		    data.append(input.name, input.value);
 		});
-		data.append('publish', '1');	
-		
-		//File data
-
-		var ids = $('.form-control').map(function(i,el){
-			return $(el).attr('id');
-		}).get();
-
-		let fileIdKey = ids.indexOf('sub-image')
-
-		if(fileIdKey === -1) fileIdKey = ids.indexOf('pro-image')
-
-		if(fileIdKey !== -1){
-
-			let files = $(`#${ids[fileIdKey]}`)[0].files;
-
-			for (var i = 0; i <= files.length; i++) {
-				data.append("files[]", files[i]);
-			}
-
-		}
+		data.append('publish', '1');
 
 		$.ajax({
 			url : '/wp-admin/admin-ajax.php',

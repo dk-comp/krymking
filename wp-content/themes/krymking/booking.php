@@ -355,6 +355,33 @@ if (!empty($_POST['send'])) {
 				wp_mail($email_to, $subject2, $message, $headers2, '');
 				
 			}
+
+
+
+  	// Без мгновенного бронирования
+            $headers = 'Content-type: text/html; charset=utf-8' . "\r\n" . 'From: Krymking <info@krymking.ru>';
+            $subject = 'Бронирования объекта на сайте Krymking.ru';
+
+            $messageContent = 'По Вашему объекту жилья id-номер ' . $post->ID . ' пришел запрос на бронирование. ';
+            $messageContent .= 'Для получения детальной информации перейдите в <a href="' . home_url("/profile/orders/") . '">Личный кабинет</a>. ';
+            $messageContent .= '<br>';
+            $messageContent .= '<br>';
+            $messageContent .= 'С уважением, <br> Команда Krymking.ru';
+
+            $message2 = include $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/' . get_template() . '/back/mail_template.php';
+
+            $message2 = str_replace('<<MAILCONTENT>>', $messageContent, $message2);
+            $message2 = str_replace('<<FIRSTNAME>>', $author->first_name, $message2);
+            $message = str_replace('<<LASTNAME>>', $author->last_name, $message2);
+
+
+
+            if(!wp_mail($author->user_email, $subject, $message, $headers)){
+
+                wp_mail($author->user_email, $subject, $message, $headers);
+
+            }
+
 			
 			wp_redirect(home_url('/request/?order-id=' . $post_id . ''));
 			

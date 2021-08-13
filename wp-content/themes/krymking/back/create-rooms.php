@@ -131,7 +131,7 @@ function create_object(){
             !$hotel && $hotel = $_POST['post_ID'];
 
 
-            $btn = '<a href="/profile/add/" class="btn btn-add-room">Добавить ещё один объект</a>';
+            $btn = '<a href="/profile/add/" class="btn">Добавить ещё один объект</a>';
             $btn2 = '<a href="' . home_url('/objects/edit/') . '?post='. $hotel . '&action=edit#rooms" class="btn btn-add-room">Добавить ещё один номер</a>';
 
             $objectType = !empty($_POST['object_type']) ? $_POST['object_type'] : null;

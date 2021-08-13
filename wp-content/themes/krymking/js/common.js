@@ -805,8 +805,7 @@ jQuery(document).ready(function ($) {
 	if (typeObject == 85 || typeObject == 86 || typeObject == 87) {*/
 
 		$(document).on('change', '.create-room *', function (e) {
-
-
+			
 			let data = new FormData();
 
 			//File data
@@ -824,8 +823,7 @@ jQuery(document).ready(function ($) {
 			$.each(form_data, function (key, input) {
 				data.append(input.name, input.value);
 			});
-
-
+			
 			$.ajax({
 				url: '/wp-admin/admin-ajax.php',
 				method: "post",

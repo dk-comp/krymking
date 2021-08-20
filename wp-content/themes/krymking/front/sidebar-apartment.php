@@ -1,4 +1,4 @@
-<?
+<?php
 global $postid;
 ?>
 
@@ -17,4 +17,9 @@ global $postid;
 <div class="error hidden">Заполните обязательные поля</div>
 
 <a href="/?post_type=hotels&p=<?=$postid;?>&preview=true" class="btn view-ad" target="_blank">Просмотр объявления</a>
-<input type="submit" name="publish" value="Опубликовать" class="btn btn-add">
+<?php if(!empty($_POST['city'])):?>
+	<input type="submit" name="publish" value="Опубликовать" class="btn btn-add">
+<?php endif;?>
+<?php if(!empty($_GET['post'])):?>
+	<input type="submit" name="publish" value="Редактировать инфо о квартире" class="btn btn-add">
+<?php endif;?>

@@ -3976,7 +3976,7 @@ header .phone .arrow {
   font-size: 13px;
 }
 .create-room .side-left .btn {
-  width: 222px;
+  /*width: 222px;*/
   background: #FFFFFF;
   border: 1px solid #D28487;
   border-radius: 90px;

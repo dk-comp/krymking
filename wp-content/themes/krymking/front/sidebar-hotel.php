@@ -6,5 +6,5 @@
 </ul>
 <div class="error hidden">Заполните обязательные поля</div>
 <?php if($_GET['action'] == 'edit'):?>
-	<input type="submit" name="publish" value="Редактировать инфо об отеле" class="btn btn-add">
+	<input type="submit" name="publish" value="Редактировать инфо об объекте" class="btn btn-add">
 <?php endif;?>

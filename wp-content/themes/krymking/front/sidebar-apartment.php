@@ -21,5 +21,5 @@ global $postid;
 	<input type="submit" name="publish" value="Опубликовать" class="btn btn-add">
 <?php endif;?>
 <?php if(!empty($_GET['post'])):?>
-	<input type="submit" name="publish" value="Редактировать инфо о квартире" class="btn btn-add">
+	<input type="submit" name="publish" value="Редактировать инфо об объекте" class="btn btn-add">
 <?php endif;?>

@@ -131,8 +131,8 @@ function create_object(){
             !$hotel && $hotel = $_POST['post_ID'];
 	        //!$hotel && $hotel = $_GET['post'];
 			
-            $btn = '<a href="/profile/add/" class="btn">Добавить ещё один объект 135 строка</a>';
-            $btn2 = '<a href="' . home_url('/objects/edit/') . '?post=' . $hotel . '&action=edit#rooms" class="btn">Добавить ещё один номер 135 строка</a>';
+            $btn = '<a href="/profile/add/" class="btn">Добавить ещё один объект</a>';
+            $btn2 = '<a href="' . home_url('/objects/edit/') . '?post=' . $hotel . '&action=edit#rooms" class="btn">Добавить ещё один номер</a>';
 
             $objectType = !empty($_POST['object_type']) ? $_POST['object_type'] : null;
 

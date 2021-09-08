@@ -239,6 +239,7 @@ jQuery(document).ready(function ($) {
 	});
 
 	$(document).on('click', '.booking-cancel', function() {
+		//$(this).parents('.booking-item').remove();
 		$.ajax({
 			url : '/wp-admin/admin-ajax.php',
 			type: "POST",

@@ -2954,6 +2954,60 @@ function booking_canceled() {
 	$post_id = $_POST['post_id'];
 
 	global $wpdb;
+	
+	$update_post = array(
+			'post_type'   => 'orders',
+			'ID'          => $post_id,
+			'post_status' => 'canceled'
+	);
+	
+	$dateBooking = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = $post_id");
+	
+	if($dateBooking){
+		
+		foreach($dateBooking as $key => $item){
+			
+			if($item->meta_key == 'check_in'){
+				$chekIn = $item->meta_value;
+			}
+			if($item->meta_key == 'check_out'){
+				$chekOut = $item->meta_value;
+			}
+			if($item->meta_key == 'apartment'){
+				$postId = $item->meta_value;
+			}
+			
+		}
+		
+		$fieldFrom = (new DateTime($chekIn))->format('Ymd');
+		$fieldTo = (new DateTime($chekOut))->format('Ymd');
+		
+		$fieldFrom = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_value = '$fieldFrom' AND meta_key LIKE 'free_dates%'")[0];
+		$fieldTo = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_value = '$fieldTo' AND meta_key LIKE 'free_dates%'")[0];
+		$allDatesRows = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_key = 'free_dates'")[0];
+		$keyFrom = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_key = '_$fieldFrom->meta_key'")[0];
+		$keyTo = $wpdb->get_results("SELECT * FROM wp_postmeta WHERE post_id = '$postId' AND meta_key = '_$fieldTo->meta_key'")[0];
+		
+		$deleteArr = [
+				$keyFrom->meta_id,
+				$keyTo->meta_id,
+				$fieldFrom->meta_id,
+				$fieldTo->meta_id
+		];
+		
+		if(!empty($deleteArr)){
+			foreach($deleteArr as $del){
+				$res = $wpdb->query("DELETE FROM wp_postmeta WHERE post_id = '$postId' AND meta_id = '$del'");
+			}
+		}
+		if($res){
+			$wpdb->query("UPDATE wp_postmeta SET meta_value = $allDatesRows->meta_value - 1 WHERE post_id = '$postId' AND meta_key = 'free_dates'");
+		}
+		
+	}
+	
+	//exit;
+	wp_update_post($update_post);
 	$user = get_userdata(get_field('customer', $post_id));
 	$post = get_field('apartment', $post_id);
 

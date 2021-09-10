@@ -368,20 +368,26 @@ if ($postid) {
 <div class="form-section " id="verification">
 	<div class="heading">Верификация Владельца</div>
 	<div class="section-gray">
-		<div class="text-agreement"><label class="custom-checkbox"><input type="checkbox" name="agreement" class="custom-input" checked=""><div class="check"></div></label> <span class="text">Нажимая на кнопку Подтвердить, Я подтверждаю свое право на размещение данного объекта в краткосрочную аренду, соглашаюсь с <a href="#">Правилами размещения объекта</a> и принимаю условия <a href="#">Договора оферты Владельцам</a></div>
-		
-		
+		<div class="text-agreement">
+			<label class="custom-checkbox">
+				<input type="checkbox" name="agreement" class="custom-input" checked="">
+				<div class="check"></div>
+			</label>
+			<span class="text">Нажимая на кнопку Подтвердить, Я подтверждаю свое право на размещение данного объекта в краткосрочную аренду, соглашаюсь
+                   с <a href="<?= home_url()  . '/vladelczam/pravila-razmeshheniya/'?>">Правилами размещения объекта</a> и принимаю условия <a href="<?= home_url()  . '/yuridicheska-informacziya/yuridicheska-informacziya-vladelczam'?>">Договора оферты Владельцам</a></div>
 		
 		<? if(get_field('verification', $postid)) { ?>
 			<input type="hidden" name="verification" value="confirm">
 			<div class="btn btn-confirm active">Подтвердить</div>
 
-			<div class="text-confirm" style="display: block;">Вы согласились с <a href="#">Правилами размещения объекта</a>, приняли условия <a href="#">Договора оферты Владельцам</a> и подтвердили свои права на размещение</div>
+			<div class="text-confirm" style="display: block;">Вы согласились с <a href="<?= home_url()  . '/vladelczam/pravila-razmeshheniya/'?>" '>Правилами размещения объекта</a>,
+              приняли условия <a href="<?= home_url()  . '/yuridicheska-informacziya/yuridicheska-informacziya-vladelczam'?>">Договора оферты Владельцам</a> и подтвердили свои права на размещение</div>
 		<? } else { ?>
 			<input type="hidden" name="verification" value="">
 			<div class="btn btn-confirm">Подтвердить</div>
 
-			<div class="text-confirm">Вы согласились с <a href="#">Правилами размещения объекта</a>, приняли условия <a href="#">Договора оферты Владельцам</a> и подтвердили свои права на размещение</div>
+			<div class="text-confirm">Вы согласились с <a href="<?= home_url()  . '/vladelczam/pravila-razmeshheniya/'?>">
+					Правилами размещения объекта</a>, приняли условия <a href="<?= home_url()  . '/yuridicheska-informacziya/yuridicheska-informacziya-vladelczam'?>">Договора оферты Владельцам</a> и подтвердили свои права на размещение</div>
 		<? } ?>
 	</div>
 </div>

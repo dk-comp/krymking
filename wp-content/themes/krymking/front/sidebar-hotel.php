@@ -5,4 +5,6 @@
 	<li data-step="rooms"><a href="#rooms" class="open-room">4. <span>Номера</span></a></li>
 </ul>
 <div class="error hidden">Заполните обязательные поля</div>
-<input type="submit" name="publish" value="Опубликовать" class="btn btn-add">
+<?php if($_GET['action'] == 'edit'):?>
+	<input type="submit" name="publish" value="Редактировать инфо об объекте" class="btn btn-add">
+<?php endif;?>

@@ -36,18 +36,17 @@ $postid = $post->ID;
 				$i = 1;
 				$count = count(get_field('gallery')) - 5;
 				foreach (get_field('gallery') as $image) { ?>
-				<div class="gallery-item">
+				
+				<div class="gallery-item" <? if ($i > 5) { ?> style="display: none" <? } ?>>
+					
 					<a href="<?=$image['url'];?>" data-fancybox="gallery">
 						<img src="<?=$image['sizes']['large'];?>" alt="<?=the_title()?>"> 
 						<span class="zoom"></span>
-						<? if ($i > 5 || $i == 5) { ?>
+						<? if ($i >= 5 && $i == 5) { ?>
 							<div class="plus-photos">+ ещё <?=$count;?> фото</div>
 						<? } ?>
 					</a>
 				</div>
-				<? if ($i == 5) { ?>
-					<?break;?>
-				<? } ?>
 				<? $i++; } ?>
 			</div>
 			<? } ?>
